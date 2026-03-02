@@ -6,11 +6,10 @@ import { products } from "../data/products";
 import { addToCart } from "../services/cartService";
 import { addToWishlist, removeFromWishlist } from "../services/wishlistService";
 import { AppContext } from "../store/AppContext";
-import { createStyleSheet, useStyles } from "../styles/unistyles";
+import { StyleSheet } from "react-native-unistyles";
 
 export default function ShopScreen() {
   const { cart, setCart, wishlist, setWishlist } = useContext(AppContext);
-  const { styles } = useStyles(stylesheet);
 
   return (
     <View style={styles.container}>
@@ -38,7 +37,7 @@ export default function ShopScreen() {
   );
 }
 
-const stylesheet = createStyleSheet((theme) => ({
+const styles = StyleSheet.create((theme) => ({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,

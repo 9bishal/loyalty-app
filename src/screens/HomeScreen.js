@@ -4,11 +4,11 @@ import { Animated, FlatList, Text, TouchableOpacity, View } from "react-native";
 import Header from "../components/Header";
 import { loyaltyTiers, rewards, transactions } from "../data/loyaltyData";
 import { AppContext } from "../store/AppContext";
-import { createStyleSheet, useStyles } from "../styles/unistyles";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 export default function HomeScreen() {
   const { rewardPoints, user } = useContext(AppContext);
-  const { styles, theme } = useStyles(stylesheet);
+  const { theme } = useUnistyles();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
 
@@ -202,7 +202,7 @@ export default function HomeScreen() {
   );
 }
 
-const stylesheet = createStyleSheet((theme) => ({
+const styles = StyleSheet.create((theme) => ({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,

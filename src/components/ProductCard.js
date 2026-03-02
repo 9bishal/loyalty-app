@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Text, TouchableOpacity, View } from "react-native";
-import { createStyleSheet, useStyles } from "react-native-unistyles";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 export default function ProductCard({
   product,
@@ -8,7 +8,7 @@ export default function ProductCard({
   onToggleWishlist,
   isWishlisted,
 }) {
-  const { styles, theme } = useStyles(stylesheet);
+  const { theme } = useUnistyles();
 
   return (
     <View style={styles.card}>
@@ -38,7 +38,7 @@ export default function ProductCard({
   );
 }
 
-const stylesheet = createStyleSheet((theme) => ({
+const styles = StyleSheet.create((theme) => ({
   card: {
     backgroundColor: theme.colors.card,
     borderRadius: 16,

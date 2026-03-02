@@ -4,11 +4,11 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Header from "../components/Header";
 import { loyaltyTiers, transactions } from "../data/loyaltyData";
 import { AppContext } from "../store/AppContext";
-import { createStyleSheet, useStyles } from "../styles/unistyles";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 export default function ProfileScreen() {
   const { rewardPoints, user, logout } = useContext(AppContext);
-  const { styles, theme } = useStyles(stylesheet);
+  const { theme } = useUnistyles();
 
   // Determine current tier
   const currentTier =
@@ -181,7 +181,7 @@ export default function ProfileScreen() {
   );
 }
 
-const stylesheet = createStyleSheet((theme) => ({
+const styles = StyleSheet.create((theme) => ({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,

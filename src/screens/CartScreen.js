@@ -9,7 +9,7 @@ import {
 } from "../services/cartService";
 import { calculateRewardPoints } from "../services/rewardService";
 import { AppContext } from "../store/AppContext";
-import { createStyleSheet, useStyles } from "react-native-unistyles";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 export default function CartScreen() {
   const {
@@ -21,7 +21,7 @@ export default function CartScreen() {
     setHistory,
   } = useContext(AppContext);
 
-  const { styles } = useStyles(stylesheet);
+  const { theme } = useUnistyles();
   const total = calculateTotal(cart);
 
   const handleCheckout = () => {
@@ -91,7 +91,7 @@ export default function CartScreen() {
   );
 }
 
-const stylesheet = createStyleSheet((theme) => ({
+const styles = StyleSheet.create((theme) => ({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,

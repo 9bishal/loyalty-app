@@ -5,11 +5,10 @@ import Header from "../components/Header";
 import { addToCart } from "../services/cartService";
 import { removeFromWishlist } from "../services/wishlistService";
 import { AppContext } from "../store/AppContext";
-import { createStyleSheet, useStyles } from "../styles/unistyles";
+import { StyleSheet } from "react-native-unistyles";
 
 export default function WishlistScreen() {
   const { wishlist, setWishlist, cart, setCart } = useContext(AppContext);
-  const { styles } = useStyles(stylesheet);
 
   const movetoCart = (item) => {
     setCart(addToCart(cart, item));
@@ -57,7 +56,7 @@ export default function WishlistScreen() {
   );
 }
 
-const stylesheet = createStyleSheet((theme) => ({
+const styles = StyleSheet.create((theme) => ({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
