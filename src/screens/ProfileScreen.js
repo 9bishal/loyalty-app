@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Header from "../components/Header";
 import { AppContext } from "../store/AppContext";
-import { StyleSheet, useStyles } from "../styles/unistyles";
+import { createStyleSheet, useStyles } from "../styles/unistyles";
 
 export default function ProfileScreen() {
   const { rewardPoints, purchaseHistory, user, logout } =
@@ -46,7 +46,7 @@ export default function ProfileScreen() {
   );
 }
 
-const stylesheet = StyleSheet.create((theme) => ({
+const stylesheet = createStyleSheet((theme) => ({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,

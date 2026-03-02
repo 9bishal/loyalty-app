@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useContext } from "react";
 import { Alert, FlatList, Text, TouchableOpacity, View } from "react-native";
 import Header from "../components/Header";
@@ -8,7 +9,7 @@ import {
 } from "../services/cartService";
 import { calculateRewardPoints } from "../services/rewardService";
 import { AppContext } from "../store/AppContext";
-import { StyleSheet, useStyles } from "../styles/unistyles";
+import { createStyleSheet, useStyles } from "../styles/unistyles";
 
 export default function CartScreen() {
   const {
@@ -17,7 +18,7 @@ export default function CartScreen() {
     rewardPoints,
     setRewardPoints,
     purchaseHistory,
-    setPurchaseHistory,
+    setHistory,
   } = useContext(AppContext);
 
   const { styles } = useStyles(stylesheet);
@@ -34,7 +35,7 @@ export default function CartScreen() {
     );
 
     setRewardPoints(result.updatedPoints);
-    setPurchaseHistory(result.updatedHistory);
+    setHistory(result.updatedHistory);
     setCart(result.clearedCart);
 
     Alert.alert(
@@ -47,13 +48,15 @@ export default function CartScreen() {
     <View style={styles.cartItem}>
       <View style={styles.itemInfo}>
         <Text style={styles.itemName}>{item.name}</Text>
-        <Text style={styles.itemPrice}>₹{item.price}</Text>
+        <Text style={styles.itemPrice}>
+          ₹{item.price} {item.quantity > 1 ? `x ${item.quantity}` : ""}
+        </Text>
       </View>
       <TouchableOpacity
         style={styles.removeBtn}
         onPress={() => setCart(removeFromCart(cart, item.id))}
       >
-        <Text style={styles.removeText}>Remove</Text>
+        <Ionicons name="trash-outline" size={20} color="#ef4444" />
       </TouchableOpacity>
     </View>
   );
@@ -88,7 +91,7 @@ export default function CartScreen() {
   );
 }
 
-const stylesheet = StyleSheet.create((theme) => ({
+const stylesheet = createStyleSheet((theme) => ({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,

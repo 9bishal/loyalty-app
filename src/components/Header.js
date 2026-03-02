@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import { StyleSheet, useStyles } from "../styles/unistyles";
+import { createStyleSheet, useStyles } from "../styles/unistyles";
 
 export default function Header({ title }) {
   const { styles } = useStyles(stylesheet);
@@ -11,7 +11,7 @@ export default function Header({ title }) {
   );
 }
 
-const stylesheet = StyleSheet.create((theme) => ({
+const stylesheet = createStyleSheet((theme) => ({
   container: {
     padding: 16,
     backgroundColor: theme.colors.primary,

@@ -1,10 +1,11 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useContext } from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import Header from "../components/Header";
 import { addToCart } from "../services/cartService";
 import { removeFromWishlist } from "../services/wishlistService";
 import { AppContext } from "../store/AppContext";
-import { StyleSheet, useStyles } from "../styles/unistyles";
+import { createStyleSheet, useStyles } from "../styles/unistyles";
 
 export default function WishlistScreen() {
   const { wishlist, setWishlist, cart, setCart } = useContext(AppContext);
@@ -32,7 +33,7 @@ export default function WishlistScreen() {
           style={styles.removeBtn}
           onPress={() => setWishlist(removeFromWishlist(wishlist, item.id))}
         >
-          <Text style={styles.removeText}>Remove</Text>
+          <Ionicons name="trash-outline" size={20} color="#ef4444" />
         </TouchableOpacity>
       </View>
     </View>
@@ -56,7 +57,7 @@ export default function WishlistScreen() {
   );
 }
 
-const stylesheet = StyleSheet.create((theme) => ({
+const stylesheet = createStyleSheet((theme) => ({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,

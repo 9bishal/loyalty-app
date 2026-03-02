@@ -4,9 +4,9 @@ import Header from "../components/Header";
 import ProductCard from "../components/ProductCard";
 import { products } from "../data/products";
 import { addToCart } from "../services/cartService";
-import { addToWishlist } from "../services/wishlistService";
+import { addToWishlist, removeFromWishlist } from "../services/wishlistService";
 import { AppContext } from "../store/AppContext";
-import { StyleSheet, useStyles } from "../styles/unistyles";
+import { createStyleSheet, useStyles } from "../styles/unistyles";
 
 export default function ShopScreen() {
   const { cart, setCart, wishlist, setWishlist } = useContext(AppContext);
@@ -21,8 +21,15 @@ export default function ShopScreen() {
         renderItem={({ item }) => (
           <ProductCard
             product={item}
+            isWishlisted={wishlist.some((w) => w.id === item.id)}
             onAddToCart={() => setCart(addToCart(cart, item))}
-            onAddToWishlist={() => setWishlist(addToWishlist(wishlist, item))}
+            onToggleWishlist={() => {
+              if (wishlist.some((w) => w.id === item.id)) {
+                setWishlist(removeFromWishlist(wishlist, item.id));
+              } else {
+                setWishlist(addToWishlist(wishlist, item));
+              }
+            }}
           />
         )}
         contentContainerStyle={styles.listContent}
@@ -31,7 +38,7 @@ export default function ShopScreen() {
   );
 }
 
-const stylesheet = StyleSheet.create((theme) => ({
+const stylesheet = createStyleSheet((theme) => ({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,

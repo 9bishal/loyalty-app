@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef } from "react";
 import { Animated, Text, View } from "react-native";
 import Header from "../components/Header";
 import { AppContext } from "../store/AppContext";
-import { StyleSheet, useStyles } from "../styles/unistyles";
+import { createStyleSheet, useStyles } from "../styles/unistyles";
 
 export default function HomeScreen() {
   const { rewardPoints, user } = useContext(AppContext);
@@ -56,7 +56,7 @@ export default function HomeScreen() {
   );
 }
 
-const stylesheet = StyleSheet.create((theme) => ({
+const stylesheet = createStyleSheet((theme) => ({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,

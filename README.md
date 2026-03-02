@@ -1,50 +1,70 @@
-# Welcome to your Expo app 👋
+# Loyalty Shop App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A beautifully designed e-commerce loyalty app built with React Native and Expo. It features a complete shopping experience with a stylized UI, responsive layout, cart management, wishlisting, and a reward points system.
 
-## Get started
+## 🚀 Tech Stack
 
-1. Install dependencies
+- **Framework**: React Native with [Expo](https://expo.dev/) (Managed Workflow)
+- **Language**: JavaScript (ES2022)
+- **Navigation**: React Navigation (`@react-navigation/bottom-tabs`)
+- **State Management**: React Context (`AppContext` for global state)
+- **Styling**: Vanilla React Native `StyleSheet` via a lightweight, drop-in custom Unistyles wrapper (Expo Go compatible)
+- **Icons**: `@expo/vector-icons` (Ionicons)
+
+## 🔑 Test Credentials
+
+To preview the app's features, an authentication screen acts as the gateway. You can log in using the following test credentials:
+
+- **Username**: `testuser`
+- **Password**: `password123`
+
+## 🌟 Features
+
+- **Storefront**: Browse available products with their prices.
+- **Cart Management**: Add items to your cart, with automatic quantity aggregation and real-time total calculation.
+- **Wishlist**: Toggle items to your personal wishlist, complete with localized and dynamic heart icons.
+- **Dynamic Navigation Badges**: The bottom tab navigation displays interactive red numerical badges reflecting your active cart and wishlist counts.
+- **Reward Points System**: Earn loyalty points upon checkout representing your purchase history.
+
+## 🛠️ Getting Started
+
+### Prerequisites
+
+- Node.js (v18 or higher recommended)
+- `npm` or `yarn`
+- [Expo Go](https://expo.dev/client) app installed on your iOS or Android device
+
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone <your-repo-url>
+   cd loyalty-app
+   ```
+
+2. Install dependencies:
 
    ```bash
    npm install
    ```
 
-2. Start the app
+   _or_
 
    ```bash
-   npx expo start
+   yarn install
    ```
 
-In the output, you'll find options to open the app in a
+3. Start the development server (be sure to clear cache if you run into any runtime issues):
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+   ```bash
+   npx expo start -c
+   ```
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+4. Open the app:
+   - Scan the QR code with the **Expo Go** app on your physical device.
+   - Alternatively, press `i` in the terminal to open in an iOS simulator, or `a` to open in an Android emulator.
 
-## Get a fresh project
+---
 
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+_Note: This project was migrated from `react-native-unistyles` v3 to a lightweight vanilla styling wrapper in order to maintain compatibility with the Expo Go runtime without relying on custom native NitroModules._

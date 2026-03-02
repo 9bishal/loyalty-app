@@ -1,8 +1,14 @@
+import { Ionicons } from "@expo/vector-icons";
 import { Text, TouchableOpacity, View } from "react-native";
-import { StyleSheet, useStyles } from "../styles/unistyles";
+import { createStyleSheet, useStyles } from "../styles/unistyles";
 
-export default function ProductCard({ product, onAddToCart, onAddToWishlist }) {
-  const { styles } = useStyles(stylesheet);
+export default function ProductCard({
+  product,
+  onAddToCart,
+  onToggleWishlist,
+  isWishlisted,
+}) {
+  const { styles, theme } = useStyles(stylesheet);
 
   return (
     <View style={styles.card}>
@@ -12,8 +18,17 @@ export default function ProductCard({ product, onAddToCart, onAddToWishlist }) {
       </View>
 
       <View style={styles.actions}>
-        <TouchableOpacity style={styles.wishlistBtn} onPress={onAddToWishlist}>
-          <Text style={styles.wishlistText}>♡ Wishlist</Text>
+        <TouchableOpacity style={styles.wishlistBtn} onPress={onToggleWishlist}>
+          <Ionicons
+            name={isWishlisted ? "heart" : "heart-outline"}
+            size={16}
+            color={isWishlisted ? "#ef4444" : theme.colors.text}
+          />
+          <Text
+            style={[styles.wishlistText, isWishlisted && { color: "#ef4444" }]}
+          >
+            Wishlist
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.cartBtn} onPress={onAddToCart}>
           <Text style={styles.cartText}>+ Cart</Text>
@@ -23,7 +38,7 @@ export default function ProductCard({ product, onAddToCart, onAddToWishlist }) {
   );
 }
 
-const stylesheet = StyleSheet.create((theme) => ({
+const stylesheet = createStyleSheet((theme) => ({
   card: {
     backgroundColor: theme.colors.card,
     borderRadius: 16,
@@ -56,6 +71,8 @@ const stylesheet = StyleSheet.create((theme) => ({
     flexDirection: "row",
   },
   wishlistBtn: {
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,
@@ -66,6 +83,7 @@ const stylesheet = StyleSheet.create((theme) => ({
     color: theme.colors.text,
     fontSize: 12,
     fontWeight: "600",
+    marginLeft: 4,
   },
   cartBtn: {
     paddingHorizontal: 12,

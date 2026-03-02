@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { validateLogin } from "../services/authService";
 import { AppContext } from "../store/AppContext";
-import { StyleSheet, useStyles } from "../styles/unistyles";
+import { createStyleSheet, useStyles } from "../styles/unistyles";
 
 export default function LoginScreen() {
   const [username, setUsername] = useState("");
@@ -59,7 +59,7 @@ export default function LoginScreen() {
   );
 }
 
-const stylesheet = StyleSheet.create((theme) => ({
+const stylesheet = createStyleSheet((theme) => ({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
