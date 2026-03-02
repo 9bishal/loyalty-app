@@ -1,4 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
+import { UnistylesRegistry } from "react-native-unistyles";
+import { theme } from "./src/styles/theme";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useContext } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -15,6 +17,9 @@ function AppContent() {
   if (state.isLoading) {
     return <SplashScreen />;
   }
+
+  // Register Unistyles theme once (first render)
+  UnistylesRegistry.addConfig({ theme });
 
   return (
     <NavigationContainer>

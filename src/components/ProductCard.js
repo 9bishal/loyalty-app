@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Text, TouchableOpacity, View } from "react-native";
-import { createStyleSheet, useStyles } from "../styles/unistyles";
+import { createStyleSheet, useStyles } from "react-native-unistyles";
 
 export default function ProductCard({
   product,

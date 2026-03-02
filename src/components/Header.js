@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import { createStyleSheet, useStyles } from "../styles/unistyles";
+import { createStyleSheet, useStyles } from "react-native-unistyles";
 
 export default function Header({ title }) {
   const { styles } = useStyles(stylesheet);

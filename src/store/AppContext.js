@@ -4,10 +4,7 @@ import { loadState, saveState } from "../services/storageService";
 export const AppContext = createContext(null);
 
 const initialState = {
-  cart: [],
-  wishlist: [],
-  rewardPoints: 0,
-  purchaseHistory: [],
+  rewardPoints: 1280,
   user: null,
   isAuthenticated: false,
   isLoading: true,
@@ -15,14 +12,8 @@ const initialState = {
 
 function appReducer(state, action) {
   switch (action.type) {
-    case "SET_CART":
-      return { ...state, cart: action.payload };
-    case "SET_WISHLIST":
-      return { ...state, wishlist: action.payload };
     case "SET_REWARD_POINTS":
       return { ...state, rewardPoints: action.payload };
-    case "SET_HISTORY":
-      return { ...state, purchaseHistory: action.payload };
     case "LOGIN":
       return { ...state, user: action.payload, isAuthenticated: true };
     case "LOGOUT":
@@ -67,15 +58,9 @@ export const AppProvider = ({ children }) => {
       dispatch,
       user: state.user,
       isAuthenticated: state.isAuthenticated,
-      cart: state.cart,
-      wishlist: state.wishlist,
       rewardPoints: state.rewardPoints,
-      purchaseHistory: state.purchaseHistory,
-      setCart: (c) => dispatch({ type: "SET_CART", payload: c }),
-      setWishlist: (w) => dispatch({ type: "SET_WISHLIST", payload: w }),
       setRewardPoints: (p) =>
         dispatch({ type: "SET_REWARD_POINTS", payload: p }),
-      setHistory: (h) => dispatch({ type: "SET_HISTORY", payload: h }),
       login: (userData) => dispatch({ type: "LOGIN", payload: userData }),
       logout: () => dispatch({ type: "LOGOUT" }),
     }),

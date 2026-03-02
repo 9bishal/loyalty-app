@@ -9,7 +9,7 @@ import {
 } from "../services/cartService";
 import { calculateRewardPoints } from "../services/rewardService";
 import { AppContext } from "../store/AppContext";
-import { createStyleSheet, useStyles } from "../styles/unistyles";
+import { createStyleSheet, useStyles } from "react-native-unistyles";
 
 export default function CartScreen() {
   const {
