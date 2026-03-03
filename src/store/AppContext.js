@@ -56,13 +56,15 @@ export const AppProvider = ({ children }) => {
     () => ({
       state,
       dispatch,
+      // Auth
       user: state.user,
       isAuthenticated: state.isAuthenticated,
+      login: (userData) => dispatch({ type: "LOGIN", payload: userData }),
+      logout: () => dispatch({ type: "LOGOUT" }),
+      // Reward Points
       rewardPoints: state.rewardPoints,
       setRewardPoints: (p) =>
         dispatch({ type: "SET_REWARD_POINTS", payload: p }),
-      login: (userData) => dispatch({ type: "LOGIN", payload: userData }),
-      logout: () => dispatch({ type: "LOGOUT" }),
     }),
     [state],
   );

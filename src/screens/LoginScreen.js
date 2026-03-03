@@ -11,11 +11,11 @@ export default function LoginScreen() {
   const { theme } = useUnistyles();
 
   const handleLogin = () => {
-    const user = validateLogin(username, password);
-    if (user) {
-      login(user);
+    const result = validateLogin(username, password);
+    if (result.success) {
+      login(result.user);
     } else {
-      Alert.alert("Login Failed", "Invalid username or password");
+      Alert.alert("Login Failed", result.error);
     }
   };
 

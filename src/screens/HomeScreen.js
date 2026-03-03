@@ -2,7 +2,15 @@ import { Ionicons } from "@expo/vector-icons";
 import { useContext, useEffect, useRef } from "react";
 import { Animated, FlatList, Text, TouchableOpacity, View } from "react-native";
 import Header from "../components/Header";
-import { loyaltyTiers, rewards, transactions } from "../data/loyaltyData";
+import { rewards, transactions } from "../data/loyaltyData";
+import {
+  canRedeemReward,
+  getCurrentTier,
+  getNextTier,
+  getPointsToNextTier,
+  getProgressToNextTier,
+  getTransactionStats,
+} from "../services/loyaltyService";
 import { AppContext } from "../store/AppContext";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
@@ -12,22 +20,12 @@ export default function HomeScreen() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
 
-  // Determine current loyalty tier
-  const currentTier =
-    [...loyaltyTiers]
-      .reverse()
-      .find((tier) => rewardPoints >= tier.minPoints) || loyaltyTiers[0];
-
-  // Next tier
-  const currentTierIndex = loyaltyTiers.findIndex(
-    (t) => t.name === currentTier.name,
-  );
-  const nextTier = loyaltyTiers[currentTierIndex + 1] || null;
-  const progressToNext = nextTier
-    ? ((rewardPoints - currentTier.minPoints) /
-        (nextTier.minPoints - currentTier.minPoints)) *
-      100
-    : 100;
+  // Business logic delegated to loyaltyService
+  const currentTier = getCurrentTier(rewardPoints);
+  const nextTier = getNextTier(rewardPoints);
+  const progressToNext = getProgressToNextTier(rewardPoints);
+  const pointsToNext = getPointsToNextTier(rewardPoints);
+  const stats = getTransactionStats();
 
   useEffect(() => {
     Animated.parallel([
@@ -112,7 +110,7 @@ export default function HomeScreen() {
               />
             </View>
             <Text style={styles.progressText}>
-              {nextTier.minPoints - rewardPoints} pts to {nextTier.name}
+              {pointsToNext} pts to {nextTier.name}
             </Text>
           </View>
         )}
@@ -122,21 +120,19 @@ export default function HomeScreen() {
       <View style={styles.statsRow}>
         <View style={styles.statCard}>
           <Ionicons name="trending-up" size={24} color="#10b981" />
-          <Text style={styles.statValue}>{transactions.length}</Text>
+          <Text style={styles.statValue}>{stats.totalTransactions}</Text>
           <Text style={styles.statLabel}>Transactions</Text>
         </View>
         <View style={styles.statCard}>
           <Ionicons name="cart" size={24} color={theme.colors.primary} />
           <Text style={styles.statValue}>
-            ₹{transactions.reduce((s, t) => s + t.amount, 0).toLocaleString()}
+            ₹{stats.totalSpent.toLocaleString()}
           </Text>
           <Text style={styles.statLabel}>Total Spent</Text>
         </View>
         <View style={styles.statCard}>
           <Ionicons name="star" size={24} color="#f59e0b" />
-          <Text style={styles.statValue}>
-            {transactions.reduce((s, t) => s + t.pointsEarned, 0)}
-          </Text>
+          <Text style={styles.statValue}>{stats.totalPointsEarned}</Text>
           <Text style={styles.statLabel}>Pts Earned</Text>
         </View>
       </View>
@@ -162,14 +158,16 @@ export default function HomeScreen() {
             <TouchableOpacity
               style={[
                 styles.redeemBtn,
-                rewardPoints < item.pointsCost && styles.redeemBtnDisabled,
+                !canRedeemReward(rewardPoints, item.pointsCost) &&
+                  styles.redeemBtnDisabled,
               ]}
-              disabled={rewardPoints < item.pointsCost}
+              disabled={!canRedeemReward(rewardPoints, item.pointsCost)}
             >
               <Text
                 style={[
                   styles.redeemText,
-                  rewardPoints < item.pointsCost && styles.redeemTextDisabled,
+                  !canRedeemReward(rewardPoints, item.pointsCost) &&
+                    styles.redeemTextDisabled,
                 ]}
               >
                 {item.pointsCost} pts

@@ -2,7 +2,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { useContext } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Header from "../components/Header";
-import { loyaltyTiers, transactions } from "../data/loyaltyData";
+import { loyaltyTiers } from "../data/loyaltyData";
+import {
+  getCurrentTier,
+  getTransactionStats,
+} from "../services/loyaltyService";
 import { AppContext } from "../store/AppContext";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
@@ -10,17 +14,9 @@ export default function ProfileScreen() {
   const { rewardPoints, user, logout } = useContext(AppContext);
   const { theme } = useUnistyles();
 
-  // Determine current tier
-  const currentTier =
-    [...loyaltyTiers]
-      .reverse()
-      .find((tier) => rewardPoints >= tier.minPoints) || loyaltyTiers[0];
-
-  const totalSpent = transactions.reduce((sum, t) => sum + t.amount, 0);
-  const totalPointsEarned = transactions.reduce(
-    (sum, t) => sum + t.pointsEarned,
-    0,
-  );
+  // Business logic delegated to loyaltyService
+  const currentTier = getCurrentTier(rewardPoints);
+  const stats = getTransactionStats();
 
   return (
     <View style={styles.container}>
@@ -66,17 +62,19 @@ export default function ProfileScreen() {
           </View>
           <View style={styles.statBox}>
             <Ionicons name="trending-up" size={22} color="#10b981" />
-            <Text style={styles.statValue}>{totalPointsEarned}</Text>
+            <Text style={styles.statValue}>{stats.totalPointsEarned}</Text>
             <Text style={styles.statLabel}>Points Earned</Text>
           </View>
           <View style={styles.statBox}>
             <Ionicons name="receipt" size={22} color={theme.colors.primary} />
-            <Text style={styles.statValue}>{transactions.length}</Text>
+            <Text style={styles.statValue}>{stats.totalTransactions}</Text>
             <Text style={styles.statLabel}>Orders</Text>
           </View>
           <View style={styles.statBox}>
             <Ionicons name="wallet" size={22} color="#8b5cf6" />
-            <Text style={styles.statValue}>₹{totalSpent.toLocaleString()}</Text>
+            <Text style={styles.statValue}>
+              ₹{stats.totalSpent.toLocaleString()}
+            </Text>
             <Text style={styles.statLabel}>Total Spent</Text>
           </View>
         </View>
