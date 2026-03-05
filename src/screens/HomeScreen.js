@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useContext, useEffect, useRef } from "react";
 import { Animated, FlatList, Text, TouchableOpacity, View } from "react-native";
 import Header from "../components/Header";
-import { rewards, transactions } from "../data/loyaltyData";
+import { transactions } from "../data/loyaltyData";
 import {
   canRedeemReward,
   getCurrentTier,
@@ -11,21 +11,23 @@ import {
   getProgressToNextTier,
   getTransactionStats,
 } from "../services/loyaltyService";
+import { getPopularRewards } from "../services/rewardsService";
 import { AppContext } from "../store/AppContext";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   const { rewardPoints, user } = useContext(AppContext);
   const { theme } = useUnistyles();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
 
-  // Business logic delegated to loyaltyService
+  // Business logic delegated to services
   const currentTier = getCurrentTier(rewardPoints);
   const nextTier = getNextTier(rewardPoints);
   const progressToNext = getProgressToNextTier(rewardPoints);
   const pointsToNext = getPointsToNextTier(rewardPoints);
   const stats = getTransactionStats();
+  const popularRewards = getPopularRewards(4);
 
   useEffect(() => {
     Animated.parallel([
@@ -42,6 +44,10 @@ export default function HomeScreen() {
     ]).start();
   }, []);
 
+  const recentTransactions = [...transactions]
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, 5);
+
   const renderTransaction = ({ item }) => (
     <View style={styles.transactionCard}>
       <View style={styles.transactionIcon}>
@@ -53,8 +59,18 @@ export default function HomeScreen() {
         <Text style={styles.transactionDate}>{item.date}</Text>
       </View>
       <View style={styles.transactionRight}>
-        <Text style={styles.transactionAmount}>₹{item.amount}</Text>
-        <Text style={styles.transactionPoints}>+{item.pointsEarned} pts</Text>
+        {item.amount > 0 && (
+          <Text style={styles.transactionAmount}>₹{item.amount}</Text>
+        )}
+        <Text
+          style={[
+            styles.transactionPoints,
+            { color: item.pointsEarned > 0 ? "#10b981" : "#ef4444" },
+          ]}
+        >
+          {item.pointsEarned > 0 ? "+" : ""}
+          {item.pointsEarned} pts
+        </Text>
       </View>
     </View>
   );
@@ -138,14 +154,25 @@ export default function HomeScreen() {
       </View>
 
       {/* Rewards Section */}
-      <Text style={styles.sectionTitle}>🎁 Available Rewards</Text>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>🎁 Popular Rewards</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("Rewards")}>
+          <Text style={styles.seeAllText}>See All</Text>
+        </TouchableOpacity>
+      </View>
       <FlatList
-        data={rewards}
+        data={popularRewards}
         horizontal
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.rewardCard}>
+          <TouchableOpacity
+            style={styles.rewardCard}
+            activeOpacity={0.7}
+            onPress={() =>
+              navigation.navigate("RewardDetails", { rewardId: item.id })
+            }
+          >
             <View style={styles.rewardIconWrap}>
               <Ionicons
                 name={item.icon}
@@ -154,7 +181,9 @@ export default function HomeScreen() {
               />
             </View>
             <Text style={styles.rewardTitle}>{item.title}</Text>
-            <Text style={styles.rewardDesc}>{item.description}</Text>
+            <Text style={styles.rewardDesc} numberOfLines={2}>
+              {item.description}
+            </Text>
             <TouchableOpacity
               style={[
                 styles.redeemBtn,
@@ -162,6 +191,9 @@ export default function HomeScreen() {
                   styles.redeemBtnDisabled,
               ]}
               disabled={!canRedeemReward(rewardPoints, item.pointsCost)}
+              onPress={() =>
+                navigation.navigate("RewardDetails", { rewardId: item.id })
+              }
             >
               <Text
                 style={[
@@ -173,23 +205,26 @@ export default function HomeScreen() {
                 {item.pointsCost} pts
               </Text>
             </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
         )}
         contentContainerStyle={{ paddingBottom: 8 }}
       />
 
       {/* Recent Transactions Header */}
-      <Text style={[styles.sectionTitle, { marginTop: 24 }]}>
-        📋 Recent Transactions
-      </Text>
+      <View style={[styles.sectionHeader, { marginTop: 24 }]}>
+        <Text style={styles.sectionTitle}>📋 Recent Activity</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("Wallet")}>
+          <Text style={styles.seeAllText}>View All</Text>
+        </TouchableOpacity>
+      </View>
     </Animated.View>
   );
 
   return (
     <View style={styles.container}>
-      <Header title="Loyalty Rewards" />
+      <Header title="Loyalty Rewards" navigation={navigation} />
       <FlatList
-        data={transactions}
+        data={recentTransactions}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderTransaction}
         ListHeaderComponent={ListHeader}
@@ -320,12 +355,22 @@ const styles = StyleSheet.create((theme) => ({
     marginTop: 2,
   },
 
-  // Section Title
+  // Section Header
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 14,
+  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
     color: theme.colors.text,
-    marginBottom: 14,
+  },
+  seeAllText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: theme.colors.primary,
   },
 
   // Rewards
@@ -431,7 +476,6 @@ const styles = StyleSheet.create((theme) => ({
   },
   transactionPoints: {
     fontSize: 12,
-    color: "#10b981",
     fontWeight: "600",
     marginTop: 2,
   },

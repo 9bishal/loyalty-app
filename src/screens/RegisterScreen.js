@@ -1,4 +1,4 @@
-// Login Screen – UI only, all validation in authService
+// Registration Screen – UI only, all validation in authService
 import { Ionicons } from "@expo/vector-icons";
 import { useContext, useState } from "react";
 import {
@@ -12,29 +12,38 @@ import {
 } from "react-native";
 import Button from "../components/Button";
 import Input from "../components/Input";
-import { validateLogin } from "../services/authService";
+import { validateRegistration } from "../services/authService";
 import { AppContext } from "../store/AppContext";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
-export default function LoginScreen({ navigation }) {
-  const [identifier, setIdentifier] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+export default function RegisterScreen({ navigation }) {
   const { login } = useContext(AppContext);
   const { theme } = useUnistyles();
+  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-  const handleLogin = () => {
+  const updateField = (field, value) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleRegister = () => {
     setLoading(true);
-    // Simulate async login
+    // Simulate async registration
     setTimeout(() => {
-      const result = validateLogin(identifier, password);
+      const result = validateRegistration(form);
       setLoading(false);
       if (result.success) {
         login(result.user);
       } else {
-        Alert.alert("Login Failed", result.error);
+        Alert.alert("Registration Failed", result.error);
       }
-    }, 800);
+    }, 1000);
   };
 
   return (
@@ -47,49 +56,74 @@ export default function LoginScreen({ navigation }) {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Logo & Welcome */}
+        {/* Header */}
         <View style={styles.headerSection}>
+          <TouchableOpacity
+            style={styles.backBtn}
+            onPress={() => navigation.goBack()}
+          >
+            <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          </TouchableOpacity>
           <View style={styles.logoContainer}>
-            <Ionicons name="gift" size={40} color={theme.colors.primary} />
+            <Ionicons name="gift" size={36} color={theme.colors.primary} />
           </View>
-          <Text style={styles.title}>Welcome Back</Text>
-          <Text style={styles.subtitle}>
-            Sign in to your Loyalty Rewards account
-          </Text>
+          <Text style={styles.title}>Create Account</Text>
+          <Text style={styles.subtitle}>Join the Loyalty Rewards program</Text>
         </View>
 
         {/* Form */}
         <Input
-          label="Email or Username"
-          placeholder="Enter email or username"
+          label="Full Name"
+          placeholder="Enter your full name"
           iconName="person-outline"
-          value={identifier}
-          onChangeText={setIdentifier}
+          value={form.name}
+          onChangeText={(v) => updateField("name", v)}
+          autoCapitalize="words"
+        />
+        <Input
+          label="Email"
+          placeholder="Enter your email"
+          iconName="mail-outline"
+          value={form.email}
+          onChangeText={(v) => updateField("email", v)}
           keyboardType="email-address"
         />
         <Input
+          label="Phone Number"
+          placeholder="Enter 10-digit phone number"
+          iconName="call-outline"
+          value={form.phone}
+          onChangeText={(v) => updateField("phone", v)}
+          keyboardType="phone-pad"
+        />
+        <Input
           label="Password"
-          placeholder="Enter your password"
+          placeholder="Create a password"
           iconName="lock-closed-outline"
-          value={password}
-          onChangeText={setPassword}
+          value={form.password}
+          onChangeText={(v) => updateField("password", v)}
+          secureTextEntry
+        />
+        <Input
+          label="Confirm Password"
+          placeholder="Re-enter your password"
+          iconName="lock-closed-outline"
+          value={form.confirmPassword}
+          onChangeText={(v) => updateField("confirmPassword", v)}
           secureTextEntry
         />
 
-        {/* Forgot Password */}
-        <TouchableOpacity
-          style={styles.forgotBtn}
-          onPress={() => navigation.navigate("ForgotPassword")}
-        >
-          <Text style={styles.forgotText}>Forgot Password?</Text>
-        </TouchableOpacity>
-
-        <Button title="Sign In" onPress={handleLogin} loading={loading} />
+        <Button
+          title="Create Account"
+          onPress={handleRegister}
+          loading={loading}
+          style={{ marginTop: 8 }}
+        />
 
         {/* Social Login */}
         <View style={styles.divider}>
           <View style={styles.dividerLine} />
-          <Text style={styles.dividerText}>or continue with</Text>
+          <Text style={styles.dividerText}>or sign up with</Text>
           <View style={styles.dividerLine} />
         </View>
 
@@ -105,22 +139,12 @@ export default function LoginScreen({ navigation }) {
           ))}
         </View>
 
-        {/* Register Link */}
+        {/* Login Link */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>Don't have an account? </Text>
-          <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-            <Text style={styles.footerLink}>Sign Up</Text>
+          <Text style={styles.footerText}>Already have an account? </Text>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Text style={styles.footerLink}>Sign In</Text>
           </TouchableOpacity>
-        </View>
-
-        {/* Test credentials hint */}
-        <View style={styles.hintBox}>
-          <Ionicons
-            name="information-circle-outline"
-            size={16}
-            color={theme.colors.muted}
-          />
-          <Text style={styles.hintText}>Test: testuser / password123</Text>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -134,23 +158,32 @@ const styles = StyleSheet.create((theme) => ({
   },
   content: {
     padding: 24,
-    paddingTop: 80,
+    paddingTop: 60,
     paddingBottom: 40,
   },
   headerSection: {
-    marginBottom: 36,
+    marginBottom: 32,
   },
-  logoContainer: {
-    width: 72,
-    height: 72,
-    borderRadius: 20,
-    backgroundColor: theme.colors.primary + "15",
+  backBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: theme.colors.card,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 24,
   },
+  logoContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 18,
+    backgroundColor: theme.colors.primary + "15",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 16,
+  },
   title: {
-    fontSize: 30,
+    fontSize: 28,
     fontWeight: "bold",
     color: theme.colors.text,
     marginBottom: 8,
@@ -159,20 +192,10 @@ const styles = StyleSheet.create((theme) => ({
     fontSize: 16,
     color: theme.colors.muted,
   },
-  forgotBtn: {
-    alignSelf: "flex-end",
-    marginBottom: 24,
-    marginTop: -8,
-  },
-  forgotText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: theme.colors.primary,
-  },
   divider: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 28,
+    marginVertical: 24,
   },
   dividerLine: {
     flex: 1,
@@ -212,19 +235,5 @@ const styles = StyleSheet.create((theme) => ({
     fontSize: 14,
     fontWeight: "700",
     color: theme.colors.primary,
-  },
-  hintBox: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-    marginTop: 20,
-    padding: 12,
-    backgroundColor: "#F3F4F6",
-    borderRadius: 8,
-  },
-  hintText: {
-    fontSize: 13,
-    color: theme.colors.muted,
   },
 }));

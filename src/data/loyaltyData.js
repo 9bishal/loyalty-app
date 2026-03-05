@@ -1,5 +1,5 @@
-// Static loyalty transaction data
-// Simulates transactions from an external e-commerce platform
+// Static loyalty data – simulates backend API responses
+// Ready to be replaced with real API calls
 
 export const transactions = [
   {
@@ -10,6 +10,7 @@ export const transactions = [
     pointsEarned: 450,
     date: "2026-02-28",
     icon: "cart",
+    type: "earn",
   },
   {
     id: 2,
@@ -19,6 +20,7 @@ export const transactions = [
     pointsEarned: 220,
     date: "2026-02-25",
     icon: "shirt",
+    type: "earn",
   },
   {
     id: 3,
@@ -28,6 +30,7 @@ export const transactions = [
     pointsEarned: 380,
     date: "2026-02-20",
     icon: "footsteps",
+    type: "earn",
   },
   {
     id: 4,
@@ -37,6 +40,7 @@ export const transactions = [
     pointsEarned: 150,
     date: "2026-02-18",
     icon: "basket",
+    type: "earn",
   },
   {
     id: 5,
@@ -46,6 +50,37 @@ export const transactions = [
     pointsEarned: 80,
     date: "2026-02-15",
     icon: "restaurant",
+    type: "earn",
+  },
+  {
+    id: 6,
+    store: "Loyalty Rewards",
+    description: "Redeemed ₹50 Off Coupon",
+    amount: 0,
+    pointsEarned: -500,
+    date: "2026-02-12",
+    icon: "gift",
+    type: "redeem",
+  },
+  {
+    id: 7,
+    store: "Meesho",
+    description: "Home Decor",
+    amount: 1200,
+    pointsEarned: 120,
+    date: "2026-02-10",
+    icon: "home",
+    type: "earn",
+  },
+  {
+    id: 8,
+    store: "Referral Bonus",
+    description: "Friend joined via your code",
+    amount: 0,
+    pointsEarned: 200,
+    date: "2026-02-08",
+    icon: "people",
+    type: "referral",
   },
 ];
 
@@ -55,41 +90,252 @@ export const loyaltyTiers = [
   {
     name: "Silver",
     minPoints: 500,
-    color: "#C0C0C0",
+    color: "#94A3B8",
     icon: "shield-half-outline",
   },
-  { name: "Gold", minPoints: 1500, color: "#FFD700", icon: "shield" },
-  { name: "Platinum", minPoints: 5000, color: "#E5E4E2", icon: "diamond" },
+  { name: "Gold", minPoints: 1500, color: "#F59E0B", icon: "shield" },
+  { name: "Platinum", minPoints: 5000, color: "#8B5CF6", icon: "diamond" },
 ];
 
-// Available rewards to redeem
+// Available rewards to redeem – organized by categories
+export const rewardCategories = [
+  { id: "all", label: "All", icon: "grid" },
+  { id: "coupons", label: "Coupons", icon: "pricetag" },
+  { id: "cashback", label: "Cashback", icon: "wallet" },
+  { id: "delivery", label: "Delivery", icon: "bicycle" },
+  { id: "exclusive", label: "Exclusive", icon: "diamond" },
+];
+
 export const rewards = [
   {
     id: 1,
     title: "₹50 Off Coupon",
-    description: "Get ₹50 off on your next purchase",
+    description: "Get ₹50 off on your next purchase above ₹500",
     pointsCost: 500,
     icon: "pricetag",
+    category: "coupons",
+    terms: [
+      "Valid on orders above ₹500",
+      "Cannot be combined with other offers",
+      "Expires 30 days after redemption",
+      "One use per customer",
+    ],
+    popularity: 85,
   },
   {
     id: 2,
     title: "Free Delivery",
-    description: "Free delivery on any order",
+    description: "Free delivery on any order, no minimum value required",
     pointsCost: 300,
     icon: "bicycle",
+    category: "delivery",
+    terms: [
+      "Valid on all delivery orders",
+      "No minimum order value",
+      "Expires 15 days after redemption",
+      "Standard delivery only",
+    ],
+    popularity: 92,
   },
   {
     id: 3,
     title: "₹200 Cashback",
-    description: "₹200 cashback to your wallet",
+    description: "Instant ₹200 cashback credited to your wallet",
     pointsCost: 2000,
     icon: "wallet",
+    category: "cashback",
+    terms: [
+      "Cashback credited within 24 hours",
+      "No minimum order value",
+      "Valid for wallet balance only",
+      "Non-transferable",
+    ],
+    popularity: 78,
   },
   {
     id: 4,
     title: "10% Discount",
-    description: "10% off on your next order (max ₹500)",
+    description: "10% off on your next order (max ₹500 discount)",
     pointsCost: 1000,
     icon: "gift",
+    category: "coupons",
+    terms: [
+      "Maximum discount of ₹500",
+      "Valid on all categories",
+      "Expires 30 days after redemption",
+      "One use per customer",
+    ],
+    popularity: 88,
+  },
+  {
+    id: 5,
+    title: "₹100 Cashback",
+    description: "₹100 cashback on orders above ₹300",
+    pointsCost: 800,
+    icon: "cash",
+    category: "cashback",
+    terms: [
+      "Valid on orders above ₹300",
+      "Cashback credited within 48 hours",
+      "Expires 20 days after redemption",
+    ],
+    popularity: 80,
+  },
+  {
+    id: 6,
+    title: "Priority Delivery",
+    description: "Get your order delivered within 2 hours",
+    pointsCost: 600,
+    icon: "flash",
+    category: "delivery",
+    terms: [
+      "Subject to availability in your area",
+      "Valid for orders placed by 6 PM",
+      "Expires 7 days after redemption",
+    ],
+    popularity: 70,
+  },
+  {
+    id: 7,
+    title: "Exclusive Bundle Deal",
+    description: "Access to exclusive bundle pricing on premium products",
+    pointsCost: 3000,
+    icon: "diamond",
+    category: "exclusive",
+    terms: [
+      "Gold tier and above only",
+      "Limited stock available",
+      "Expires 14 days after redemption",
+      "Cannot be combined with other offers",
+    ],
+    popularity: 65,
+  },
+  {
+    id: 8,
+    title: "₹500 Shopping Voucher",
+    description: "₹500 voucher usable across all partner stores",
+    pointsCost: 4500,
+    icon: "card",
+    category: "exclusive",
+    terms: [
+      "Valid across all partner stores",
+      "Non-refundable",
+      "Expires 60 days after redemption",
+      "Platinum tier exclusive",
+    ],
+    popularity: 95,
   },
 ];
+
+// Notification templates
+export const notifications = [
+  {
+    id: 1,
+    title: "Points Earned! 🎉",
+    message: "You earned 450 points from your Amazon purchase",
+    type: "earn",
+    icon: "star",
+    timestamp: "2026-02-28T14:30:00",
+    read: false,
+  },
+  {
+    id: 2,
+    title: "Reward Redeemed ✅",
+    message: "₹50 Off Coupon has been activated. Use it within 30 days!",
+    type: "redeem",
+    icon: "checkmark-circle",
+    timestamp: "2026-02-27T10:15:00",
+    read: false,
+  },
+  {
+    id: 3,
+    title: "Tier Upgrade! 🏆",
+    message: "Congratulations! You've reached Silver tier",
+    type: "promo",
+    icon: "trophy",
+    timestamp: "2026-02-25T09:00:00",
+    read: true,
+  },
+  {
+    id: 4,
+    title: "Weekend Bonus! 🔥",
+    message: "Earn 2x points on all purchases this weekend",
+    type: "promo",
+    icon: "flame",
+    timestamp: "2026-02-22T08:00:00",
+    read: true,
+  },
+  {
+    id: 5,
+    title: "Referral Success! 🤝",
+    message: "Your friend Rahul joined! You earned 200 bonus points",
+    type: "referral",
+    icon: "people",
+    timestamp: "2026-02-20T16:45:00",
+    read: true,
+  },
+  {
+    id: 6,
+    title: "New Rewards Available! 🎁",
+    message: "Check out 3 new exclusive rewards added to the catalog",
+    type: "promo",
+    icon: "gift",
+    timestamp: "2026-02-18T11:30:00",
+    read: true,
+  },
+  {
+    id: 7,
+    title: "Points Expiry Reminder ⏰",
+    message: "150 points will expire in 7 days. Redeem them now!",
+    type: "earn",
+    icon: "time",
+    timestamp: "2026-02-15T09:00:00",
+    read: true,
+  },
+];
+
+// Referral data
+export const referralData = {
+  referralCode: "LOYAL2026",
+  totalReferrals: 5,
+  pendingReferrals: 2,
+  pointsPerReferral: 200,
+  totalPointsEarned: 1000,
+  referralHistory: [
+    {
+      id: 1,
+      name: "Rahul S.",
+      date: "2026-02-08",
+      status: "completed",
+      pointsEarned: 200,
+    },
+    {
+      id: 2,
+      name: "Priya M.",
+      date: "2026-02-10",
+      status: "completed",
+      pointsEarned: 200,
+    },
+    {
+      id: 3,
+      name: "Amit K.",
+      date: "2026-02-14",
+      status: "completed",
+      pointsEarned: 200,
+    },
+    {
+      id: 4,
+      name: "Sneha R.",
+      date: "2026-02-20",
+      status: "pending",
+      pointsEarned: 0,
+    },
+    {
+      id: 5,
+      name: "Vikram J.",
+      date: "2026-02-25",
+      status: "pending",
+      pointsEarned: 0,
+    },
+  ],
+};

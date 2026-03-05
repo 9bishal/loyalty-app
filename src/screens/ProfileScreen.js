@@ -10,7 +10,7 @@ import {
 import { AppContext } from "../store/AppContext";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
-export default function ProfileScreen() {
+export default function ProfileScreen({ navigation }) {
   const { rewardPoints, user, logout } = useContext(AppContext);
   const { theme } = useUnistyles();
 
@@ -20,7 +20,7 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.container}>
-      <Header title="My Profile" />
+      <Header title="My Profile" navigation={navigation} />
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}

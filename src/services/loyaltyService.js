@@ -66,7 +66,9 @@ export const getTransactionStats = () => {
   return {
     totalTransactions: transactions.length,
     totalSpent: transactions.reduce((sum, t) => sum + t.amount, 0),
-    totalPointsEarned: transactions.reduce((sum, t) => sum + t.pointsEarned, 0),
+    totalPointsEarned: transactions
+      .filter((t) => t.pointsEarned > 0)
+      .reduce((sum, t) => sum + t.pointsEarned, 0),
   };
 };
 
