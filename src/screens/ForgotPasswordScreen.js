@@ -1,4 +1,3 @@
-// Forgot Password Screen – UI only, validation in authService
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import {
@@ -12,10 +11,8 @@ import {
 import Button from "../components/Button";
 import Input from "../components/Input";
 import { validatePasswordRecovery } from "../services/authService";
-import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 export default function ForgotPasswordScreen({ navigation }) {
-  const { theme } = useUnistyles();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -35,31 +32,33 @@ export default function ForgotPasswordScreen({ navigation }) {
 
   if (sent) {
     return (
-      <View style={styles.container}>
-        <View style={styles.successContent}>
-          <View style={styles.successIcon}>
-            <Ionicons name="mail-open" size={48} color={theme.colors.primary} />
+      <View className="flex-1 bg-background pt-16">
+        <View className="flex-1 justify-center items-center px-6 md:max-w-md md:mx-auto w-full">
+          <View className="w-24 h-24 rounded-full bg-primary/10 items-center justify-center mb-6">
+            <Ionicons name="mail-open" size={48} color="#2563eb" />
           </View>
-          <Text style={styles.successTitle}>Check Your Email</Text>
-          <Text style={styles.successSubtitle}>
+          <Text className="text-2xl font-bold text-text mb-3">
+            Check Your Email
+          </Text>
+          <Text className="text-base text-muted text-center leading-6">
             We've sent a password reset link to{"\n"}
-            <Text style={{ fontWeight: "700", color: theme.colors.text }}>
-              {email}
-            </Text>
+            <Text className="font-bold text-text">{email}</Text>
           </Text>
           <Button
             title="Back to Login"
             onPress={() => navigation.goBack()}
-            style={{ marginTop: 32 }}
+            style={{ marginTop: 32, width: "100%" }}
           />
           <TouchableOpacity
-            style={styles.resendBtn}
+            className="mt-5 p-3"
             onPress={() => {
               setSent(false);
               setEmail("");
             }}
           >
-            <Text style={styles.resendText}>Didn't receive it? Try again</Text>
+            <Text className="text-sm text-primary font-semibold">
+              Didn't receive it? Try again
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -68,28 +67,25 @@ export default function ForgotPasswordScreen({ navigation }) {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      className="flex-1 bg-background"
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <View style={styles.content}>
-        {/* Header */}
+      <View className="flex-1 px-6 pt-[60px] justify-start md:max-w-md md:mx-auto w-full">
         <TouchableOpacity
-          style={styles.backBtn}
+          className="w-10 h-10 rounded-xl bg-card items-center justify-center mb-8"
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Ionicons name="arrow-back" size={24} color="#111827" />
         </TouchableOpacity>
 
-        <View style={styles.iconContainer}>
-          <Ionicons
-            name="lock-open-outline"
-            size={40}
-            color={theme.colors.primary}
-          />
+        <View className="w-[72px] h-[72px] rounded-bl-3xl rounded-tr-3xl bg-primary/10 items-center justify-center mb-6">
+          <Ionicons name="lock-open-outline" size={40} color="#2563eb" />
         </View>
 
-        <Text style={styles.title}>Forgot Password?</Text>
-        <Text style={styles.subtitle}>
+        <Text className="text-3xl font-bold text-text mb-3">
+          Forgot Password?
+        </Text>
+        <Text className="text-base text-muted leading-6 mb-8">
           No worries! Enter your email and we'll send you a reset link.
         </Text>
 
@@ -109,107 +105,13 @@ export default function ForgotPasswordScreen({ navigation }) {
           style={{ marginTop: 8 }}
         />
 
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>Remember your password? </Text>
+        <View className="flex-row justify-center mt-8">
+          <Text className="text-sm text-muted">Remember your password? </Text>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.footerLink}>Sign In</Text>
+            <Text className="text-sm font-bold text-primary">Sign In</Text>
           </TouchableOpacity>
         </View>
       </View>
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create((theme) => ({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  content: {
-    flex: 1,
-    padding: 24,
-    paddingTop: 60,
-    justifyContent: "flex-start",
-  },
-  backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: theme.colors.card,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 32,
-  },
-  iconContainer: {
-    width: 72,
-    height: 72,
-    borderRadius: 20,
-    backgroundColor: theme.colors.primary + "15",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: theme.colors.text,
-    marginBottom: 12,
-  },
-  subtitle: {
-    fontSize: 15,
-    color: theme.colors.muted,
-    lineHeight: 22,
-    marginBottom: 32,
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 32,
-  },
-  footerText: {
-    fontSize: 14,
-    color: theme.colors.muted,
-  },
-  footerLink: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: theme.colors.primary,
-  },
-  // Success state
-  successContent: {
-    flex: 1,
-    justifyContent: "center",
-    padding: 24,
-    alignItems: "center",
-  },
-  successIcon: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    backgroundColor: theme.colors.primary + "15",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 24,
-  },
-  successTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: theme.colors.text,
-    marginBottom: 12,
-  },
-  successSubtitle: {
-    fontSize: 15,
-    color: theme.colors.muted,
-    textAlign: "center",
-    lineHeight: 22,
-  },
-  resendBtn: {
-    marginTop: 20,
-    padding: 12,
-  },
-  resendText: {
-    fontSize: 14,
-    color: theme.colors.primary,
-    fontWeight: "600",
-  },
-}));

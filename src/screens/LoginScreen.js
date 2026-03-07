@@ -1,6 +1,5 @@
-// Login Screen – UI only, all validation in authService
 import { Ionicons } from "@expo/vector-icons";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import {
   Alert,
   KeyboardAvoidingView,
@@ -13,19 +12,16 @@ import {
 import Button from "../components/Button";
 import Input from "../components/Input";
 import { validateLogin } from "../services/authService";
-import { AppContext } from "../store/AppContext";
-import { StyleSheet, useUnistyles } from "react-native-unistyles";
+import { useStore } from "../store/useStore";
 
 export default function LoginScreen({ navigation }) {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useContext(AppContext);
-  const { theme } = useUnistyles();
+  const login = useStore((state) => state.login);
 
   const handleLogin = () => {
     setLoading(true);
-    // Simulate async login
     setTimeout(() => {
       const result = validateLogin(identifier, password);
       setLoading(false);
@@ -39,26 +35,31 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      className="flex-1 bg-background"
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView
-        contentContainerStyle={styles.content}
+        contentContainerClassName="md:max-w-md md:mx-auto w-full"
+        contentContainerStyle={{
+          padding: 24,
+          paddingTop: 80,
+          paddingBottom: 40,
+        }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Logo & Welcome */}
-        <View style={styles.headerSection}>
-          <View style={styles.logoContainer}>
-            <Ionicons name="gift" size={40} color={theme.colors.primary} />
+        <View className="mb-9">
+          <View className="w-[72px] h-[72px] rounded-2xl bg-primary/10 items-center justify-center mb-6">
+            <Ionicons name="gift" size={40} color="#2563eb" />
           </View>
-          <Text style={styles.title}>Welcome Back</Text>
-          <Text style={styles.subtitle}>
-            Sign in to your Loyalty Rewards account
+          <Text className="text-3xl font-bold text-text mb-2">
+            Welcome Back
+          </Text>
+          <Text className="text-base text-muted">
+            Sign in to your XYZ Rewards account
           </Text>
         </View>
 
-        {/* Form */}
         <Input
           label="Email or Username"
           placeholder="Enter email or username"
@@ -76,155 +77,56 @@ export default function LoginScreen({ navigation }) {
           secureTextEntry
         />
 
-        {/* Forgot Password */}
         <TouchableOpacity
-          style={styles.forgotBtn}
+          className="self-end mb-6 -mt-2"
           onPress={() => navigation.navigate("ForgotPassword")}
         >
-          <Text style={styles.forgotText}>Forgot Password?</Text>
+          <Text className="text-sm font-semibold text-primary">
+            Forgot Password?
+          </Text>
         </TouchableOpacity>
 
         <Button title="Sign In" onPress={handleLogin} loading={loading} />
 
-        {/* Social Login */}
-        <View style={styles.divider}>
-          <View style={styles.dividerLine} />
-          <Text style={styles.dividerText}>or continue with</Text>
-          <View style={styles.dividerLine} />
+        <View className="flex-row items-center my-7">
+          <View className="flex-1 h-[1px] bg-gray-200" />
+          <Text className="mx-4 text-sm text-muted">or continue with</Text>
+          <View className="flex-1 h-[1px] bg-gray-200" />
         </View>
 
-        <View style={styles.socialRow}>
+        <View className="flex-row justify-center gap-4">
           {[
             { icon: "logo-google", color: "#DB4437", label: "Google" },
             { icon: "logo-apple", color: "#000000", label: "Apple" },
             { icon: "logo-facebook", color: "#1877F2", label: "Facebook" },
           ].map((social) => (
-            <TouchableOpacity key={social.label} style={styles.socialBtn}>
+            <TouchableOpacity
+              key={social.label}
+              className="w-14 h-14 rounded-xl bg-card items-center justify-center border border-gray-200"
+            >
               <Ionicons name={social.icon} size={22} color={social.color} />
             </TouchableOpacity>
           ))}
         </View>
 
-        {/* Register Link */}
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>Don't have an account? </Text>
+        <View className="flex-row justify-center mt-8">
+          <Text className="text-sm text-muted">Don't have an account? </Text>
           <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-            <Text style={styles.footerLink}>Sign Up</Text>
+            <Text className="text-sm font-bold text-primary">Sign Up</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Test credentials hint */}
-        <View style={styles.hintBox}>
+        <View className="flex-row items-center justify-center gap-1.5 mt-5 p-3 bg-gray-100 rounded-lg">
           <Ionicons
             name="information-circle-outline"
             size={16}
-            color={theme.colors.muted}
+            color="#6b7280"
           />
-          <Text style={styles.hintText}>Test: testuser / password123</Text>
+          <Text className="text-sm text-muted">
+            Test: testuser / password123
+          </Text>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create((theme) => ({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  content: {
-    padding: 24,
-    paddingTop: 80,
-    paddingBottom: 40,
-  },
-  headerSection: {
-    marginBottom: 36,
-  },
-  logoContainer: {
-    width: 72,
-    height: 72,
-    borderRadius: 20,
-    backgroundColor: theme.colors.primary + "15",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: "bold",
-    color: theme.colors.text,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: theme.colors.muted,
-  },
-  forgotBtn: {
-    alignSelf: "flex-end",
-    marginBottom: 24,
-    marginTop: -8,
-  },
-  forgotText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: theme.colors.primary,
-  },
-  divider: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 28,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: "#E5E7EB",
-  },
-  dividerText: {
-    marginHorizontal: 16,
-    fontSize: 13,
-    color: theme.colors.muted,
-  },
-  socialRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 16,
-  },
-  socialBtn: {
-    width: 56,
-    height: 56,
-    borderRadius: 14,
-    backgroundColor: theme.colors.card,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 32,
-  },
-  footerText: {
-    fontSize: 14,
-    color: theme.colors.muted,
-  },
-  footerLink: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: theme.colors.primary,
-  },
-  hintBox: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-    marginTop: 20,
-    padding: 12,
-    backgroundColor: "#F3F4F6",
-    borderRadius: 8,
-  },
-  hintText: {
-    fontSize: 13,
-    color: theme.colors.muted,
-  },
-}));

@@ -1,6 +1,5 @@
-// Registration Screen – UI only, all validation in authService
 import { Ionicons } from "@expo/vector-icons";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import {
   Alert,
   KeyboardAvoidingView,
@@ -13,12 +12,10 @@ import {
 import Button from "../components/Button";
 import Input from "../components/Input";
 import { validateRegistration } from "../services/authService";
-import { AppContext } from "../store/AppContext";
-import { StyleSheet, useUnistyles } from "react-native-unistyles";
+import { useStore } from "../store/useStore";
 
 export default function RegisterScreen({ navigation }) {
-  const { login } = useContext(AppContext);
-  const { theme } = useUnistyles();
+  const login = useStore((state) => state.login);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -34,7 +31,6 @@ export default function RegisterScreen({ navigation }) {
 
   const handleRegister = () => {
     setLoading(true);
-    // Simulate async registration
     setTimeout(() => {
       const result = validateRegistration(form);
       setLoading(false);
@@ -48,30 +44,37 @@ export default function RegisterScreen({ navigation }) {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      className="flex-1 bg-background"
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView
-        contentContainerStyle={styles.content}
+        contentContainerClassName="md:max-w-md md:mx-auto w-full"
+        contentContainerStyle={{
+          padding: 24,
+          paddingTop: 60,
+          paddingBottom: 40,
+        }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Header */}
-        <View style={styles.headerSection}>
+        <View className="mb-8">
           <TouchableOpacity
-            style={styles.backBtn}
+            className="w-10 h-10 rounded-xl bg-card items-center justify-center mb-6"
             onPress={() => navigation.goBack()}
           >
-            <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+            <Ionicons name="arrow-back" size={24} color="#111827" />
           </TouchableOpacity>
-          <View style={styles.logoContainer}>
-            <Ionicons name="gift" size={36} color={theme.colors.primary} />
+          <View className="w-16 h-16 rounded-2xl bg-primary/10 items-center justify-center mb-4">
+            <Ionicons name="gift" size={36} color="#2563eb" />
           </View>
-          <Text style={styles.title}>Create Account</Text>
-          <Text style={styles.subtitle}>Join the Loyalty Rewards program</Text>
+          <Text className="text-3xl font-bold text-text mb-2">
+            Create Account
+          </Text>
+          <Text className="text-base text-muted">
+            Join the XYZ Rewards program
+          </Text>
         </View>
 
-        {/* Form */}
         <Input
           label="Full Name"
           placeholder="Enter your full name"
@@ -120,120 +123,34 @@ export default function RegisterScreen({ navigation }) {
           style={{ marginTop: 8 }}
         />
 
-        {/* Social Login */}
-        <View style={styles.divider}>
-          <View style={styles.dividerLine} />
-          <Text style={styles.dividerText}>or sign up with</Text>
-          <View style={styles.dividerLine} />
+        <View className="flex-row items-center my-6">
+          <View className="flex-1 h-[1px] bg-gray-200" />
+          <Text className="mx-4 text-sm text-muted">or sign up with</Text>
+          <View className="flex-1 h-[1px] bg-gray-200" />
         </View>
 
-        <View style={styles.socialRow}>
+        <View className="flex-row justify-center gap-4">
           {[
             { icon: "logo-google", color: "#DB4437", label: "Google" },
             { icon: "logo-apple", color: "#000000", label: "Apple" },
             { icon: "logo-facebook", color: "#1877F2", label: "Facebook" },
           ].map((social) => (
-            <TouchableOpacity key={social.label} style={styles.socialBtn}>
+            <TouchableOpacity
+              key={social.label}
+              className="w-14 h-14 rounded-xl bg-card items-center justify-center border border-gray-200"
+            >
               <Ionicons name={social.icon} size={22} color={social.color} />
             </TouchableOpacity>
           ))}
         </View>
 
-        {/* Login Link */}
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>Already have an account? </Text>
+        <View className="flex-row justify-center mt-8">
+          <Text className="text-sm text-muted">Already have an account? </Text>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.footerLink}>Sign In</Text>
+            <Text className="text-sm font-bold text-primary">Sign In</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create((theme) => ({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  content: {
-    padding: 24,
-    paddingTop: 60,
-    paddingBottom: 40,
-  },
-  headerSection: {
-    marginBottom: 32,
-  },
-  backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: theme.colors.card,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 24,
-  },
-  logoContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 18,
-    backgroundColor: theme.colors.primary + "15",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 16,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: theme.colors.text,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: theme.colors.muted,
-  },
-  divider: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 24,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: "#E5E7EB",
-  },
-  dividerText: {
-    marginHorizontal: 16,
-    fontSize: 13,
-    color: theme.colors.muted,
-  },
-  socialRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 16,
-  },
-  socialBtn: {
-    width: 56,
-    height: 56,
-    borderRadius: 14,
-    backgroundColor: theme.colors.card,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 32,
-  },
-  footerText: {
-    fontSize: 14,
-    color: theme.colors.muted,
-  },
-  footerLink: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: theme.colors.primary,
-  },
-}));
