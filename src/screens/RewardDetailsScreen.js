@@ -1,7 +1,7 @@
-// Reward Details Screen – UI only, redemption logic in rewardsService
 import { Ionicons } from "@expo/vector-icons";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Badge from "../components/Badge";
 import Button from "../components/Button";
 import {
@@ -9,16 +9,15 @@ import {
   getRewardById,
   processRedemption,
 } from "../services/rewardsService";
-import { AppContext } from "../store/AppContext";
-import { StyleSheet, useUnistyles } from "react-native-unistyles";
+import { useStore } from "../store/useStore";
 
 export default function RewardDetailsScreen({ route, navigation }) {
   const { rewardId } = route.params;
-  const { rewardPoints, setRewardPoints } = useContext(AppContext);
-  const { theme } = useUnistyles();
+  const rewardPoints = useStore((state) => state.state.rewardPoints);
+  const setRewardPoints = useStore((state) => state.setRewardPoints);
+  const insets = useSafeAreaInsets();
   const [redeeming, setRedeeming] = useState(false);
 
-  // Business logic delegated to rewardsService
   const reward = getRewardById(rewardId);
   const redeemable = reward
     ? canRedeem(rewardPoints, reward.pointsCost)
@@ -26,8 +25,10 @@ export default function RewardDetailsScreen({ route, navigation }) {
 
   if (!reward) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>Reward not found</Text>
+      <View className="flex-1 bg-background">
+        <Text className="flex-1 text-center mt-24 text-muted text-base">
+          Reward not found
+        </Text>
       </View>
     );
   }
@@ -42,7 +43,6 @@ export default function RewardDetailsScreen({ route, navigation }) {
           text: "Redeem",
           onPress: () => {
             setRedeeming(true);
-            // Simulate async redemption
             setTimeout(() => {
               const result = processRedemption(rewardPoints, reward);
               setRedeeming(false);
@@ -62,66 +62,60 @@ export default function RewardDetailsScreen({ route, navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Custom Header */}
-      <View style={styles.header}>
+    <View className="flex-1 bg-background">
+      <View
+        className="flex-row items-center justify-between px-4 pt-3 pb-3 bg-card border-b border-gray-100"
+        style={{ paddingTop: insets.top + 12 }}
+      >
         <TouchableOpacity
-          style={styles.backBtn}
+          className="w-10 h-10 rounded-xl bg-gray-50 items-center justify-center"
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={22} color={theme.colors.text} />
+          <Ionicons name="arrow-back" size={22} color="#111827" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Reward Details</Text>
+        <Text className="text-[18px] font-bold text-text">Reward Details</Text>
         <View style={{ width: 40 }} />
       </View>
 
       <ScrollView
-        contentContainerStyle={styles.content}
+        contentContainerClassName="md:max-w-2xl md:mx-auto w-full"
+        contentContainerStyle={{ padding: 20, paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Reward Hero */}
-        <View style={styles.heroCard}>
-          <View style={styles.heroIconWrap}>
-            <Ionicons
-              name={reward.icon}
-              size={40}
-              color={theme.colors.primary}
-            />
+        <View className="bg-card rounded-3xl p-7 items-center mb-4 shadow-sm shadow-black/5 elevation-4">
+          <View className="w-20 h-20 rounded-3xl bg-primary/10 items-center justify-center mb-4">
+            <Ionicons name={reward.icon} size={40} color="#2563eb" />
           </View>
-          <Text style={styles.heroTitle}>{reward.title}</Text>
-          <Text style={styles.heroDesc}>{reward.description}</Text>
+          <Text className="text-2xl font-bold text-text mb-2 text-center">
+            {reward.title}
+          </Text>
+          <Text className="text-[15px] text-muted text-center leading-[22px] mb-4">
+            {reward.description}
+          </Text>
 
-          <View style={styles.heroBadgeRow}>
-            <Badge
-              label={reward.category}
-              color={theme.colors.primary}
-              size="md"
-            />
-            <View style={styles.popularityWrap}>
+          <View className="flex-row items-center gap-3">
+            <Badge label={reward.category} color="#2563eb" size="md" />
+            <View className="flex-row items-center gap-1">
               <Ionicons name="flame" size={14} color="#F59E0B" />
-              <Text style={styles.popularityText}>
+              <Text className="text-[13px] text-amber-500 font-semibold">
                 {reward.popularity}% popular
               </Text>
             </View>
           </View>
         </View>
 
-        {/* Points Cost Card */}
-        <View style={styles.costCard}>
-          <View style={styles.costLeft}>
-            <Text style={styles.costLabel}>Points Required</Text>
-            <Text style={styles.costValue}>
+        <View className="bg-card rounded-2xl p-5 flex-row items-center mb-4 shadow-sm shadow-black/5 elevation-2">
+          <View className="flex-1 items-center">
+            <Text className="text-xs text-muted mb-1">Points Required</Text>
+            <Text className="text-xl font-bold text-primary">
               {reward.pointsCost.toLocaleString()} pts
             </Text>
           </View>
-          <View style={styles.costDivider} />
-          <View style={styles.costRight}>
-            <Text style={styles.costLabel}>Your Balance</Text>
+          <View className="w-[1px] h-10 bg-gray-200 mx-4" />
+          <View className="flex-1 items-center">
+            <Text className="text-xs text-muted mb-1">Your Balance</Text>
             <Text
-              style={[
-                styles.costValue,
-                { color: redeemable ? "#10B981" : "#EF4444" },
-              ]}
+              className={`text-xl font-bold ${redeemable ? "text-emerald-500" : "text-red-500"}`}
             >
               {rewardPoints.toLocaleString()} pts
             </Text>
@@ -129,46 +123,54 @@ export default function RewardDetailsScreen({ route, navigation }) {
         </View>
 
         {!redeemable && (
-          <View style={styles.insufficientBanner}>
+          <View className="flex-row items-center bg-red-50 rounded-xl p-3.5 gap-2.5 mb-4">
             <Ionicons name="alert-circle" size={18} color="#EF4444" />
-            <Text style={styles.insufficientText}>
+            <Text className="flex-1 text-[13px] text-red-500 font-medium leading-[18px]">
               You need {reward.pointsCost - rewardPoints} more points to redeem
               this reward
             </Text>
           </View>
         )}
 
-        {/* Terms & Conditions */}
-        <View style={styles.termsSection}>
-          <Text style={styles.sectionTitle}>Terms & Conditions</Text>
+        <View className="bg-card rounded-2xl p-5 mb-4 shadow-sm shadow-black/5 elevation-1">
+          <Text className="text-[17px] font-bold text-text mb-3.5">
+            Terms & Conditions
+          </Text>
           {reward.terms.map((term, index) => (
-            <View key={index} style={styles.termRow}>
+            <View key={index} className="flex-row items-start gap-2.5 mb-3">
               <Ionicons name="checkmark-circle" size={18} color="#10B981" />
-              <Text style={styles.termText}>{term}</Text>
+              <Text className="flex-1 text-[14px] text-muted leading-5">
+                {term}
+              </Text>
             </View>
           ))}
         </View>
 
-        {/* How it Works */}
-        <View style={styles.howSection}>
-          <Text style={styles.sectionTitle}>How It Works</Text>
+        <View className="bg-card rounded-2xl p-5 shadow-sm shadow-black/5 elevation-1">
+          <Text className="text-[17px] font-bold text-text mb-3.5">
+            How It Works
+          </Text>
           {[
             { step: "1", text: "Tap 'Redeem Now' to claim this reward" },
             { step: "2", text: "Points will be deducted from your balance" },
             { step: "3", text: "Reward will be available in your wallet" },
           ].map((item) => (
-            <View key={item.step} style={styles.stepRow}>
-              <View style={styles.stepCircle}>
-                <Text style={styles.stepNumber}>{item.step}</Text>
+            <View
+              key={item.step}
+              className="flex-row items-center gap-3.5 mb-4"
+            >
+              <View className="w-8 h-8 rounded-full bg-primary/10 items-center justify-center">
+                <Text className="text-[14px] font-bold text-primary">
+                  {item.step}
+                </Text>
               </View>
-              <Text style={styles.stepText}>{item.text}</Text>
+              <Text className="flex-1 text-[14px] text-text">{item.text}</Text>
             </View>
           ))}
         </View>
       </ScrollView>
 
-      {/* Bottom CTA */}
-      <View style={styles.bottomBar}>
+      <View className="absolute bottom-0 left-0 right-0 bg-card p-5 pb-8 border-t border-gray-100 shadow-md shadow-black/10 elevation-8">
         <Button
           title={redeemable ? "Redeem Now" : "Insufficient Points"}
           onPress={handleRedeem}
@@ -179,229 +181,3 @@ export default function RewardDetailsScreen({ route, navigation }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create((theme) => ({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 12,
-    backgroundColor: theme.colors.card,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F3F4F6",
-  },
-  backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: theme.colors.background,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: theme.colors.text,
-  },
-  content: {
-    padding: 20,
-    paddingBottom: 120,
-  },
-  errorText: {
-    flex: 1,
-    textAlign: "center",
-    marginTop: 100,
-    color: theme.colors.muted,
-    fontSize: 16,
-  },
-
-  // Hero
-  heroCard: {
-    backgroundColor: theme.colors.card,
-    borderRadius: 20,
-    padding: 28,
-    alignItems: "center",
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 4,
-  },
-  heroIconWrap: {
-    width: 80,
-    height: 80,
-    borderRadius: 24,
-    backgroundColor: theme.colors.primary + "12",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 16,
-  },
-  heroTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: theme.colors.text,
-    marginBottom: 8,
-    textAlign: "center",
-  },
-  heroDesc: {
-    fontSize: 15,
-    color: theme.colors.muted,
-    textAlign: "center",
-    lineHeight: 22,
-    marginBottom: 16,
-  },
-  heroBadgeRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  popularityWrap: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  popularityText: {
-    fontSize: 13,
-    color: "#F59E0B",
-    fontWeight: "600",
-  },
-
-  // Cost
-  costCard: {
-    backgroundColor: theme.colors.card,
-    borderRadius: 16,
-    padding: 20,
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  costLeft: {
-    flex: 1,
-    alignItems: "center",
-  },
-  costRight: {
-    flex: 1,
-    alignItems: "center",
-  },
-  costDivider: {
-    width: 1,
-    height: 40,
-    backgroundColor: "#E5E7EB",
-    marginHorizontal: 16,
-  },
-  costLabel: {
-    fontSize: 12,
-    color: theme.colors.muted,
-    marginBottom: 4,
-  },
-  costValue: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: theme.colors.primary,
-  },
-
-  // Insufficient
-  insufficientBanner: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#FEF2F2",
-    borderRadius: 12,
-    padding: 14,
-    gap: 10,
-    marginBottom: 16,
-  },
-  insufficientText: {
-    flex: 1,
-    fontSize: 13,
-    color: "#EF4444",
-    fontWeight: "500",
-    lineHeight: 18,
-  },
-
-  // Terms
-  termsSection: {
-    backgroundColor: theme.colors.card,
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 17,
-    fontWeight: "bold",
-    color: theme.colors.text,
-    marginBottom: 14,
-  },
-  termRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 10,
-    marginBottom: 12,
-  },
-  termText: {
-    flex: 1,
-    fontSize: 14,
-    color: theme.colors.muted,
-    lineHeight: 20,
-  },
-
-  // How it works
-  howSection: {
-    backgroundColor: theme.colors.card,
-    borderRadius: 16,
-    padding: 20,
-  },
-  stepRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 14,
-    marginBottom: 16,
-  },
-  stepCircle: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: theme.colors.primary + "15",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  stepNumber: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: theme.colors.primary,
-  },
-  stepText: {
-    flex: 1,
-    fontSize: 14,
-    color: theme.colors.text,
-  },
-
-  // Bottom
-  bottomBar: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: theme.colors.card,
-    padding: 20,
-    paddingBottom: 34,
-    borderTopWidth: 1,
-    borderTopColor: "#F3F4F6",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-}));

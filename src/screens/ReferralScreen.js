@@ -1,17 +1,8 @@
-// Referral Screen – UI only, business logic in referralService
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import {
-  Alert,
-  FlatList,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Badge from "../components/Badge";
 import Header from "../components/Header";
-import Card from "../components/Card";
 import {
   formatReferralDate,
   getReferralCode,
@@ -20,13 +11,10 @@ import {
   getShareChannels,
   getShareMessage,
 } from "../services/referralService";
-import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 export default function ReferralScreen() {
-  const { theme } = useUnistyles();
   const [copied, setCopied] = useState(false);
 
-  // Business logic delegated to referralService
   const referralCode = getReferralCode();
   const stats = getReferralStats();
   const history = getReferralHistory();
@@ -40,36 +28,40 @@ export default function ReferralScreen() {
 
   const handleShare = (channel) => {
     const message = getShareMessage(referralCode);
-    // In production, would open the respective app with the message
     Alert.alert(`Share via ${channel.label}`, message);
   };
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 bg-background">
       <Header title="Refer & Earn" />
       <ScrollView
-        contentContainerStyle={styles.content}
+        contentContainerClassName="md:max-w-2xl md:mx-auto w-full"
+        contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero Section */}
-        <View style={styles.heroCard}>
-          <View style={styles.heroIconContainer}>
-            <Ionicons name="gift" size={40} color={theme.colors.primary} />
+        <View className="bg-primary/10 rounded-3xl p-7 items-center mb-5 border border-primary/20">
+          <View className="w-[72px] h-[72px] rounded-full bg-primary/20 items-center justify-center mb-4">
+            <Ionicons name="gift" size={40} color="#2563eb" />
           </View>
-          <Text style={styles.heroTitle}>Refer Friends & Earn</Text>
-          <Text style={styles.heroSubtitle}>
+          <Text className="text-[22px] font-bold text-text mb-2">
+            Refer Friends & Earn
+          </Text>
+          <Text className="text-sm text-muted text-center leading-[22px]">
             Share your referral code with friends.{"\n"}
             Earn {stats.pointsPerReferral} points for each successful referral!
           </Text>
         </View>
 
-        {/* Referral Code Card */}
-        <View style={styles.codeCard}>
-          <Text style={styles.codeLabel}>YOUR REFERRAL CODE</Text>
-          <View style={styles.codeRow}>
-            <Text style={styles.codeText}>{referralCode}</Text>
+        <View className="bg-card rounded-2xl p-5 mb-6 shadow-sm shadow-black/5 elevation-3">
+          <Text className="text-[11px] text-muted tracking-widest mb-3">
+            YOUR REFERRAL CODE
+          </Text>
+          <View className="flex-row items-center justify-between">
+            <Text className="text-2xl font-bold text-primary tracking-[3px]">
+              {referralCode}
+            </Text>
             <TouchableOpacity
-              style={[styles.copyBtn, copied && { backgroundColor: "#10B981" }]}
+              className={`flex-row items-center gap-1.5 px-4 py-2.5 rounded-lg ${copied ? "bg-emerald-500" : "bg-primary"}`}
               onPress={handleCopyCode}
             >
               <Ionicons
@@ -77,84 +69,100 @@ export default function ReferralScreen() {
                 size={18}
                 color="#FFFFFF"
               />
-              <Text style={styles.copyBtnText}>
+              <Text className="text-white font-bold text-[13px]">
                 {copied ? "Copied!" : "Copy"}
               </Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* Share Options */}
-        <Text style={styles.sectionTitle}>Share Via</Text>
-        <View style={styles.shareRow}>
+        <Text className="text-[17px] font-bold text-text mb-3.5">
+          Share Via
+        </Text>
+        <View className="flex-row justify-between mb-6">
           {shareChannels.map((channel) => (
             <TouchableOpacity
               key={channel.id}
-              style={styles.shareItem}
+              className="flex-1 items-center"
               onPress={() => handleShare(channel)}
               activeOpacity={0.7}
             >
               <View
-                style={[
-                  styles.shareIcon,
-                  { backgroundColor: channel.color + "15" },
-                ]}
+                className="w-[52px] h-[52px] rounded-2xl items-center justify-center mb-2"
+                style={{ backgroundColor: channel.color + "15" }}
               >
                 <Ionicons name={channel.icon} size={24} color={channel.color} />
               </View>
-              <Text style={styles.shareLabel}>{channel.label}</Text>
+              <Text className="text-[11px] text-muted font-semibold">
+                {channel.label}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
 
-        {/* Stats Cards */}
-        <Text style={styles.sectionTitle}>Referral Stats</Text>
-        <View style={styles.statsRow}>
-          <View style={styles.statCard}>
-            <Ionicons name="people" size={22} color={theme.colors.primary} />
-            <Text style={styles.statValue}>{stats.total}</Text>
-            <Text style={styles.statLabel}>Total</Text>
+        <Text className="text-[17px] font-bold text-text mb-3.5">
+          Referral Stats
+        </Text>
+        <View className="flex-row gap-2.5 mb-6">
+          <View className="flex-1 bg-card rounded-2xl p-3.5 items-center shadow-sm shadow-black/5 elevation-1">
+            <Ionicons name="people" size={22} color="#2563eb" />
+            <Text className="text-lg font-bold text-text mt-1.5">
+              {stats.total}
+            </Text>
+            <Text className="text-[10px] text-muted mt-0.5">Total</Text>
           </View>
-          <View style={styles.statCard}>
+          <View className="flex-1 bg-card rounded-2xl p-3.5 items-center shadow-sm shadow-black/5 elevation-1">
             <Ionicons name="checkmark-circle" size={22} color="#10B981" />
-            <Text style={styles.statValue}>{stats.completed}</Text>
-            <Text style={styles.statLabel}>Completed</Text>
+            <Text className="text-lg font-bold text-text mt-1.5">
+              {stats.completed}
+            </Text>
+            <Text className="text-[10px] text-muted mt-0.5">Completed</Text>
           </View>
-          <View style={styles.statCard}>
+          <View className="flex-1 bg-card rounded-2xl p-3.5 items-center shadow-sm shadow-black/5 elevation-1">
             <Ionicons name="time" size={22} color="#F59E0B" />
-            <Text style={styles.statValue}>{stats.pending}</Text>
-            <Text style={styles.statLabel}>Pending</Text>
+            <Text className="text-lg font-bold text-text mt-1.5">
+              {stats.pending}
+            </Text>
+            <Text className="text-[10px] text-muted mt-0.5">Pending</Text>
           </View>
-          <View style={styles.statCard}>
+          <View className="flex-1 bg-card rounded-2xl p-3.5 items-center shadow-sm shadow-black/5 elevation-1">
             <Ionicons name="star" size={22} color="#8B5CF6" />
-            <Text style={styles.statValue}>{stats.pointsEarned}</Text>
-            <Text style={styles.statLabel}>Pts Earned</Text>
+            <Text className="text-lg font-bold text-text mt-1.5">
+              {stats.pointsEarned}
+            </Text>
+            <Text className="text-[10px] text-muted mt-0.5">Pts Earned</Text>
           </View>
         </View>
 
-        {/* Referral History */}
-        <Text style={styles.sectionTitle}>Referral History</Text>
+        <Text className="text-[17px] font-bold text-text mb-3.5">
+          Referral History
+        </Text>
         {history.map((item) => (
-          <View key={item.id} style={styles.historyCard}>
-            <View style={styles.historyAvatar}>
-              <Text style={styles.historyAvatarText}>
+          <View
+            key={item.id}
+            className="bg-card rounded-2xl p-4 mb-2.5 flex-row items-center shadow-sm shadow-black/5 elevation-1"
+          >
+            <View className="w-10 h-10 rounded-full bg-primary/15 items-center justify-center mr-3">
+              <Text className="text-base font-bold text-primary">
                 {item.name.charAt(0)}
               </Text>
             </View>
-            <View style={styles.historyInfo}>
-              <Text style={styles.historyName}>{item.name}</Text>
-              <Text style={styles.historyDate}>
+            <View className="flex-1">
+              <Text className="text-[15px] font-semibold text-text">
+                {item.name}
+              </Text>
+              <Text className="text-xs text-muted mt-0.5">
                 {formatReferralDate(item.date)}
               </Text>
             </View>
-            <View style={styles.historyRight}>
+            <View className="items-end gap-1">
               <Badge
                 label={item.status}
                 color={item.status === "completed" ? "#10B981" : "#F59E0B"}
                 variant="subtle"
               />
               {item.pointsEarned > 0 && (
-                <Text style={styles.historyPoints}>
+                <Text className="text-xs font-bold text-emerald-500">
                   +{item.pointsEarned} pts
                 </Text>
               )}
@@ -165,201 +173,3 @@ export default function ReferralScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create((theme) => ({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  content: {
-    padding: 20,
-    paddingBottom: 40,
-  },
-
-  // Hero
-  heroCard: {
-    backgroundColor: theme.colors.primary + "10",
-    borderRadius: 20,
-    padding: 28,
-    alignItems: "center",
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: theme.colors.primary + "20",
-  },
-  heroIconContainer: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: theme.colors.primary + "20",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 16,
-  },
-  heroTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: theme.colors.text,
-    marginBottom: 8,
-  },
-  heroSubtitle: {
-    fontSize: 14,
-    color: theme.colors.muted,
-    textAlign: "center",
-    lineHeight: 22,
-  },
-
-  // Code Card
-  codeCard: {
-    backgroundColor: theme.colors.card,
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 24,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  codeLabel: {
-    fontSize: 11,
-    color: theme.colors.muted,
-    letterSpacing: 2,
-    marginBottom: 12,
-  },
-  codeRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  codeText: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: theme.colors.primary,
-    letterSpacing: 3,
-  },
-  copyBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: theme.colors.primary,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 10,
-  },
-  copyBtnText: {
-    color: "#FFFFFF",
-    fontWeight: "700",
-    fontSize: 13,
-  },
-
-  // Share
-  sectionTitle: {
-    fontSize: 17,
-    fontWeight: "bold",
-    color: theme.colors.text,
-    marginBottom: 14,
-  },
-  shareRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 24,
-  },
-  shareItem: {
-    alignItems: "center",
-    flex: 1,
-  },
-  shareIcon: {
-    width: 52,
-    height: 52,
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 8,
-  },
-  shareLabel: {
-    fontSize: 11,
-    color: theme.colors.muted,
-    fontWeight: "600",
-  },
-
-  // Stats
-  statsRow: {
-    flexDirection: "row",
-    gap: 10,
-    marginBottom: 24,
-  },
-  statCard: {
-    flex: 1,
-    backgroundColor: theme.colors.card,
-    borderRadius: 14,
-    padding: 14,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
-    shadowRadius: 3,
-    elevation: 1,
-  },
-  statValue: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: theme.colors.text,
-    marginTop: 6,
-  },
-  statLabel: {
-    fontSize: 10,
-    color: theme.colors.muted,
-    marginTop: 2,
-  },
-
-  // History
-  historyCard: {
-    backgroundColor: theme.colors.card,
-    borderRadius: 14,
-    padding: 16,
-    marginBottom: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.03,
-    shadowRadius: 3,
-    elevation: 1,
-  },
-  historyAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: theme.colors.primary + "15",
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 12,
-  },
-  historyAvatarText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: theme.colors.primary,
-  },
-  historyInfo: {
-    flex: 1,
-  },
-  historyName: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: theme.colors.text,
-  },
-  historyDate: {
-    fontSize: 12,
-    color: theme.colors.muted,
-    marginTop: 2,
-  },
-  historyRight: {
-    alignItems: "flex-end",
-    gap: 4,
-  },
-  historyPoints: {
-    fontSize: 12,
-    fontWeight: "700",
-    color: "#10B981",
-  },
-}));

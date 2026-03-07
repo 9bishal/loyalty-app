@@ -1,6 +1,5 @@
-// Wallet Screen – UI only, business logic in walletService
 import { Ionicons } from "@expo/vector-icons";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import Header from "../components/Header";
 import EmptyState from "../components/EmptyState";
@@ -10,8 +9,7 @@ import {
   getTransactionsByType,
   getWalletSummary,
 } from "../services/walletService";
-import { AppContext } from "../store/AppContext";
-import { StyleSheet, useUnistyles } from "react-native-unistyles";
+import { useStore } from "../store/useStore";
 
 const FILTER_TABS = [
   { id: "all", label: "All" },
@@ -21,11 +19,9 @@ const FILTER_TABS = [
 ];
 
 export default function WalletScreen() {
-  const { rewardPoints } = useContext(AppContext);
-  const { theme } = useUnistyles();
+  const rewardPoints = useStore((state) => state.state.rewardPoints);
   const [activeFilter, setActiveFilter] = useState("all");
 
-  // Business logic delegated to walletService
   const summary = getWalletSummary(rewardPoints);
   const transactions = getTransactionsByType(activeFilter);
 
@@ -34,30 +30,34 @@ export default function WalletScreen() {
     const isEarned = item.pointsEarned > 0;
 
     return (
-      <View style={styles.transactionCard}>
+      <View className="bg-card rounded-2xl p-4 mb-2.5 flex-row items-center shadow-sm shadow-black/5 elevation-1">
         <View
-          style={[styles.transactionIcon, { backgroundColor: color + "15" }]}
+          className="w-[42px] h-[42px] rounded-xl items-center justify-center mr-3"
+          style={{ backgroundColor: color + "15" }}
         >
           <Ionicons name={item.icon} size={20} color={color} />
         </View>
-        <View style={styles.transactionInfo}>
-          <Text style={styles.transactionStore}>{item.store}</Text>
-          <Text style={styles.transactionDesc}>{item.description}</Text>
-          <Text style={styles.transactionDate}>
+        <View className="flex-1">
+          <Text className="text-[15px] font-semibold text-text">
+            {item.store}
+          </Text>
+          <Text className="text-[12px] text-muted mt-0.5">
+            {item.description}
+          </Text>
+          <Text className="text-[11px] text-gray-400 mt-1">
             {formatTransactionDate(item.date)}
           </Text>
         </View>
-        <View style={styles.transactionRight}>
+        <View className="items-end">
           {item.amount > 0 && (
-            <Text style={styles.transactionAmount}>
+            <Text className="text-[14px] font-semibold text-text">
               ₹{item.amount.toLocaleString()}
             </Text>
           )}
           <Text
-            style={[
-              styles.transactionPoints,
-              { color: isEarned ? "#10B981" : "#EF4444" },
-            ]}
+            className={`text-[13px] font-bold mt-0.5 ${
+              isEarned ? "text-emerald-500" : "text-red-500"
+            }`}
           >
             {isEarned ? "+" : ""}
             {item.pointsEarned} pts
@@ -69,61 +69,65 @@ export default function WalletScreen() {
 
   const ListHeader = () => (
     <View>
-      {/* Balance Card */}
-      <View style={styles.balanceCard}>
-        <Text style={styles.balanceLabel}>CURRENT BALANCE</Text>
-        <Text style={styles.balanceValue}>{rewardPoints.toLocaleString()}</Text>
-        <Text style={styles.balanceUnit}>Reward Points</Text>
+      <View className="bg-primary rounded-3xl p-7 items-center mb-4 shadow-lg shadow-primary/30 elevation-6">
+        <Text className="text-[11px] text-white/70 tracking-widest mb-2">
+          CURRENT BALANCE
+        </Text>
+        <Text className="text-[44px] font-bold text-white mb-1">
+          {rewardPoints.toLocaleString()}
+        </Text>
+        <Text className="text-[14px] text-white/80">Reward Points</Text>
       </View>
 
-      {/* Summary Stats */}
-      <View style={styles.summaryRow}>
-        <View style={styles.summaryItem}>
-          <View style={[styles.summaryDot, { backgroundColor: "#10B981" }]} />
+      <View className="flex-row bg-card rounded-2xl p-4 mb-5 items-center shadow-sm shadow-black/5 elevation-2">
+        <View className="flex-1 flex-row items-center gap-2">
+          <View className="w-2 h-2 rounded-full bg-emerald-500" />
           <View>
-            <Text style={styles.summaryValue}>
+            <Text className="text-[15px] font-bold text-text">
               {summary.totalEarned.toLocaleString()}
             </Text>
-            <Text style={styles.summaryLabel}>Earned</Text>
+            <Text className="text-[11px] text-muted">Earned</Text>
           </View>
         </View>
-        <View style={styles.summaryDivider} />
-        <View style={styles.summaryItem}>
-          <View style={[styles.summaryDot, { backgroundColor: "#EF4444" }]} />
+        <View className="w-[1px] h-[30px] bg-gray-200 mx-2" />
+        <View className="flex-1 flex-row items-center gap-2">
+          <View className="w-2 h-2 rounded-full bg-red-500" />
           <View>
-            <Text style={styles.summaryValue}>
+            <Text className="text-[15px] font-bold text-text">
               {summary.totalRedeemed.toLocaleString()}
             </Text>
-            <Text style={styles.summaryLabel}>Redeemed</Text>
+            <Text className="text-[11px] text-muted">Redeemed</Text>
           </View>
         </View>
-        <View style={styles.summaryDivider} />
-        <View style={styles.summaryItem}>
-          <View
-            style={[
-              styles.summaryDot,
-              { backgroundColor: theme.colors.primary },
-            ]}
-          />
+        <View className="w-[1px] h-[30px] bg-gray-200 mx-2" />
+        <View className="flex-1 flex-row items-center gap-2">
+          <View className="w-2 h-2 rounded-full bg-primary" />
           <View>
-            <Text style={styles.summaryValue}>{summary.totalTransactions}</Text>
-            <Text style={styles.summaryLabel}>Transactions</Text>
+            <Text className="text-[15px] font-bold text-text">
+              {summary.totalTransactions}
+            </Text>
+            <Text className="text-[11px] text-muted">Transactions</Text>
           </View>
         </View>
       </View>
 
-      {/* Filter Tabs */}
-      <View style={styles.filterRow}>
+      <View className="flex-row gap-2 mb-5">
         {FILTER_TABS.map((tab) => {
           const isActive = tab.id === activeFilter;
           return (
             <TouchableOpacity
               key={tab.id}
-              style={[styles.filterTab, isActive && styles.filterTabActive]}
+              className={`flex-1 py-2.5 rounded-xl items-center border ${
+                isActive
+                  ? "bg-primary border-primary"
+                  : "bg-card border-gray-200"
+              }`}
               onPress={() => setActiveFilter(tab.id)}
             >
               <Text
-                style={[styles.filterText, isActive && styles.filterTextActive]}
+                className={`text-[13px] font-semibold ${
+                  isActive ? "text-white" : "text-muted"
+                }`}
               >
                 {tab.label}
               </Text>
@@ -132,12 +136,14 @@ export default function WalletScreen() {
         })}
       </View>
 
-      <Text style={styles.sectionTitle}>Transaction History</Text>
+      <Text className="text-[17px] font-bold text-text mb-3.5">
+        Transaction History
+      </Text>
     </View>
   );
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 bg-background">
       <Header title="Points Wallet" />
       <FlatList
         data={transactions}
@@ -151,180 +157,10 @@ export default function WalletScreen() {
             subtitle="No transactions found for this filter"
           />
         }
-        contentContainerStyle={styles.content}
+        contentContainerClassName="md:max-w-2xl md:mx-auto w-full"
+        contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create((theme) => ({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  content: {
-    padding: 20,
-    paddingBottom: 40,
-  },
-
-  // Balance Card
-  balanceCard: {
-    backgroundColor: theme.colors.primary,
-    borderRadius: 20,
-    padding: 28,
-    alignItems: "center",
-    marginBottom: 16,
-    shadowColor: theme.colors.primary,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 6,
-  },
-  balanceLabel: {
-    fontSize: 11,
-    color: "#FFFFFF" + "AA",
-    letterSpacing: 2,
-    marginBottom: 8,
-  },
-  balanceValue: {
-    fontSize: 44,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-    marginBottom: 4,
-  },
-  balanceUnit: {
-    fontSize: 14,
-    color: "#FFFFFF" + "CC",
-  },
-
-  // Summary
-  summaryRow: {
-    flexDirection: "row",
-    backgroundColor: theme.colors.card,
-    borderRadius: 14,
-    padding: 16,
-    marginBottom: 20,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  summaryItem: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  summaryDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  summaryValue: {
-    fontSize: 15,
-    fontWeight: "bold",
-    color: theme.colors.text,
-  },
-  summaryLabel: {
-    fontSize: 11,
-    color: theme.colors.muted,
-  },
-  summaryDivider: {
-    width: 1,
-    height: 30,
-    backgroundColor: "#E5E7EB",
-    marginHorizontal: 8,
-  },
-
-  // Filters
-  filterRow: {
-    flexDirection: "row",
-    gap: 8,
-    marginBottom: 20,
-  },
-  filterTab: {
-    flex: 1,
-    paddingVertical: 10,
-    borderRadius: 10,
-    backgroundColor: theme.colors.card,
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-  },
-  filterTabActive: {
-    backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary,
-  },
-  filterText: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: theme.colors.muted,
-  },
-  filterTextActive: {
-    color: "#FFFFFF",
-  },
-
-  sectionTitle: {
-    fontSize: 17,
-    fontWeight: "bold",
-    color: theme.colors.text,
-    marginBottom: 14,
-  },
-
-  // Transactions
-  transactionCard: {
-    backgroundColor: theme.colors.card,
-    borderRadius: 14,
-    padding: 16,
-    marginBottom: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.03,
-    shadowRadius: 3,
-    elevation: 1,
-  },
-  transactionIcon: {
-    width: 42,
-    height: 42,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 12,
-  },
-  transactionInfo: {
-    flex: 1,
-  },
-  transactionStore: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: theme.colors.text,
-  },
-  transactionDesc: {
-    fontSize: 12,
-    color: theme.colors.muted,
-    marginTop: 2,
-  },
-  transactionDate: {
-    fontSize: 11,
-    color: "#9CA3AF",
-    marginTop: 4,
-  },
-  transactionRight: {
-    alignItems: "flex-end",
-  },
-  transactionAmount: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: theme.colors.text,
-  },
-  transactionPoints: {
-    fontSize: 13,
-    fontWeight: "700",
-    marginTop: 2,
-  },
-}));
