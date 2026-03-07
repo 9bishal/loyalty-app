@@ -78,8 +78,8 @@ src/
 ├── navigation/       # Bottom tab navigator (Home, Profile)
 ├── screens/          # Screen components (Login, Home, Profile, Splash)
 ├── services/         # Business logic (auth, rewards, storage)
-├── store/            # React Context global state
-└── styles/           # Theme config & unistyles wrapper
+├── store/            # State management (Zustand)
+└── global.css        # Theme & NativeWind configuration
 ```
 
 ## 📜 License
