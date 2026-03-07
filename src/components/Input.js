@@ -1,21 +1,7 @@
-// Reusable Input field component
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
-/**
- * @param {object} props
- * @param {string} props.label - Label text
- * @param {string} props.placeholder
- * @param {string} props.value
- * @param {function} props.onChangeText
- * @param {string} props.iconName - Ionicons icon name
- * @param {boolean} props.secureTextEntry
- * @param {string} props.error - Error message
- * @param {string} props.keyboardType
- * @param {boolean} props.autoCapitalize
- */
 export default function Input({
   label,
   placeholder,
@@ -28,38 +14,35 @@ export default function Input({
   autoCapitalize = "none",
   ...rest
 }) {
-  const { theme } = useUnistyles();
   const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
   return (
-    <View style={styles.container}>
-      {label && <Text style={styles.label}>{label}</Text>}
+    <View className="mb-4">
+      {label && (
+        <Text className="text-sm font-semibold text-text mb-2">{label}</Text>
+      )}
       <View
-        style={[
-          styles.inputWrapper,
-          isFocused && styles.inputFocused,
-          error && styles.inputError,
-        ]}
+        className={`flex-row items-center rounded-xl px-3.5 border min-h-[52px] ${
+          error
+            ? "border-red-500 bg-red-50"
+            : isFocused
+              ? "border-primary bg-primary/10"
+              : "border-gray-200 bg-card"
+        }`}
       >
         {iconName && (
           <Ionicons
             name={iconName}
             size={20}
-            color={
-              error
-                ? "#EF4444"
-                : isFocused
-                  ? theme.colors.primary
-                  : theme.colors.muted
-            }
-            style={styles.icon}
+            color={error ? "#EF4444" : isFocused ? "#2563eb" : "#6B7280"}
+            style={{ marginRight: 10 }}
           />
         )}
         <TextInput
-          style={styles.input}
+          className="flex-1 text-base text-text py-3.5"
           placeholder={placeholder}
-          placeholderTextColor={theme.colors.muted}
+          placeholderTextColor="#6B7280"
           value={value}
           onChangeText={onChangeText}
           secureTextEntry={secureTextEntry && !showPassword}
@@ -77,57 +60,12 @@ export default function Input({
             <Ionicons
               name={showPassword ? "eye-off" : "eye"}
               size={20}
-              color={theme.colors.muted}
+              color="#6B7280"
             />
           </TouchableOpacity>
         )}
       </View>
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && <Text className="text-xs text-red-500 mt-1 ml-1">{error}</Text>}
     </View>
   );
 }
-
-const styles = StyleSheet.create((theme) => ({
-  container: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: theme.colors.text,
-    marginBottom: 8,
-  },
-  inputWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: theme.colors.card,
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    borderWidth: 1.5,
-    borderColor: "#E5E7EB",
-    minHeight: 52,
-  },
-  inputFocused: {
-    borderColor: theme.colors.primary,
-    backgroundColor: theme.colors.primary + "08",
-  },
-  inputError: {
-    borderColor: "#EF4444",
-    backgroundColor: "#FEF2F2",
-  },
-  icon: {
-    marginRight: 10,
-  },
-  input: {
-    flex: 1,
-    fontSize: 16,
-    color: theme.colors.text,
-    paddingVertical: 14,
-  },
-  errorText: {
-    fontSize: 12,
-    color: "#EF4444",
-    marginTop: 4,
-    marginLeft: 4,
-  },
-}));

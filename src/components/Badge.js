@@ -1,14 +1,6 @@
 // Reusable Badge component for status indicators
 import { Text, View } from "react-native";
-import { StyleSheet } from "react-native-unistyles";
 
-/**
- * @param {object} props
- * @param {string} props.label - Badge text
- * @param {string} props.color - Primary color
- * @param {'filled'|'outlined'|'subtle'} props.variant
- * @param {'sm'|'md'} props.size
- */
 export default function Badge({
   label,
   color = "#2563EB",
@@ -34,7 +26,7 @@ export default function Badge({
       case "subtle":
       default:
         return {
-          bg: color + "18",
+          bg: color + "18", // 10% opacity roughly
           textColor: color,
           borderColor: "transparent",
         };
@@ -45,8 +37,8 @@ export default function Badge({
 
   return (
     <View
+      className="rounded-full self-start"
       style={[
-        styles.badge,
         {
           backgroundColor: s.bg,
           borderWidth: s.borderColor !== "transparent" ? 1 : 0,
@@ -57,8 +49,8 @@ export default function Badge({
       ]}
     >
       <Text
+        className="font-bold"
         style={[
-          styles.text,
           {
             color: s.textColor,
             fontSize: isSmall ? 11 : 13,
@@ -70,13 +62,3 @@ export default function Badge({
     </View>
   );
 }
-
-const styles = StyleSheet.create(() => ({
-  badge: {
-    borderRadius: 20,
-    alignSelf: "flex-start",
-  },
-  text: {
-    fontWeight: "700",
-  },
-}));

@@ -1,25 +1,28 @@
-// Header component with optional notification bell
+// Header component with safe area and optional notification bell
 import { Ionicons } from "@expo/vector-icons";
 import { Text, TouchableOpacity, View } from "react-native";
-import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import { getUnreadCount } from "../services/notificationService";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useStore } from "../store/useStore";
 
 export default function Header({ title, navigation }) {
-  const { theme } = useUnistyles();
-  const unreadCount = getUnreadCount();
+  const insets = useSafeAreaInsets();
+  const unreadCount = useStore((state) => state.state.unreadCount);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
+    <View
+      className="flex-row items-center justify-between px-4 pb-3.5 bg-primary"
+      style={{ paddingTop: insets.top + 12 }}
+    >
+      <Text className="text-white text-xl font-bold">{title}</Text>
       {navigation && (
         <TouchableOpacity
-          style={styles.bellBtn}
+          className="relative w-10 h-10 rounded-xl bg-white/10 items-center justify-center"
           onPress={() => navigation.navigate("Notifications")}
         >
           <Ionicons name="notifications-outline" size={22} color="#FFFFFF" />
           {unreadCount > 0 && (
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>
+            <View className="absolute -top-0.5 -right-0.5 bg-red-500 rounded-full min-w-[18px] h-[18px] items-center justify-center px-1">
+              <Text className="text-white text-[10px] font-bold">
                 {unreadCount > 9 ? "9+" : unreadCount}
               </Text>
             </View>
@@ -29,45 +32,3 @@ export default function Header({ title, navigation }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create((theme) => ({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 16,
-    backgroundColor: theme.colors.primary,
-    paddingTop: 12,
-  },
-  title: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  bellBtn: {
-    position: "relative",
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: "#FFFFFF15",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  badge: {
-    position: "absolute",
-    top: -2,
-    right: -2,
-    backgroundColor: "#EF4444",
-    borderRadius: 10,
-    minWidth: 18,
-    height: 18,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 4,
-  },
-  badgeText: {
-    color: "#FFFFFF",
-    fontSize: 10,
-    fontWeight: "bold",
-  },
-}));

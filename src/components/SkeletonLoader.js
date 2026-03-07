@@ -1,15 +1,7 @@
 // Skeleton Loader component for loading states
 import { useEffect, useRef } from "react";
 import { Animated, View } from "react-native";
-import { StyleSheet } from "react-native-unistyles";
 
-/**
- * @param {object} props
- * @param {number} props.width - Width of skeleton
- * @param {number} props.height - Height of skeleton
- * @param {number} props.borderRadius - Border radius
- * @param {object} props.style - Additional styles
- */
 export function SkeletonItem({ width, height = 20, borderRadius = 8, style }) {
   const pulseAnim = useRef(new Animated.Value(0.3)).current;
 
@@ -34,8 +26,8 @@ export function SkeletonItem({ width, height = 20, borderRadius = 8, style }) {
 
   return (
     <Animated.View
+      className="bg-gray-200"
       style={[
-        styles.skeleton,
         {
           width,
           height,
@@ -48,14 +40,11 @@ export function SkeletonItem({ width, height = 20, borderRadius = 8, style }) {
   );
 }
 
-/**
- * Full card skeleton loader
- */
 export function SkeletonCard() {
   return (
-    <View style={styles.cardContainer}>
+    <View className="flex-row items-center bg-card rounded-2xl p-4 mb-2.5">
       <SkeletonItem width={44} height={44} borderRadius={12} />
-      <View style={styles.cardContent}>
+      <View className="flex-1 ml-3">
         <SkeletonItem width="70%" height={16} />
         <SkeletonItem width="50%" height={12} style={{ marginTop: 8 }} />
       </View>
@@ -64,11 +53,6 @@ export function SkeletonCard() {
   );
 }
 
-/**
- * List skeleton loader
- * @param {object} props
- * @param {number} props.count - Number of skeleton items
- */
 export function SkeletonList({ count = 5 }) {
   return (
     <View>
@@ -78,21 +62,3 @@ export function SkeletonList({ count = 5 }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create((theme) => ({
-  skeleton: {
-    backgroundColor: "#E5E7EB",
-  },
-  cardContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: theme.colors.card,
-    borderRadius: 14,
-    padding: 16,
-    marginBottom: 10,
-  },
-  cardContent: {
-    flex: 1,
-    marginLeft: 12,
-  },
-}));

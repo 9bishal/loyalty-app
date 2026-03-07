@@ -1,16 +1,6 @@
 // Reusable Button component
 import { ActivityIndicator, Text, TouchableOpacity } from "react-native";
-import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
-/**
- * @param {object} props
- * @param {string} props.title - Button text
- * @param {function} props.onPress - Press handler
- * @param {'primary'|'secondary'|'outline'|'danger'} props.variant
- * @param {boolean} props.loading - Show loading spinner
- * @param {boolean} props.disabled
- * @param {object} props.style - Additional styles
- */
 export default function Button({
   title,
   onPress,
@@ -19,25 +9,26 @@ export default function Button({
   disabled = false,
   style,
 }) {
-  const { theme } = useUnistyles();
-
   const variantStyles = {
     primary: {
-      bg: theme.colors.primary,
-      text: "#FFFFFF",
+      className: "bg-primary border-transparent",
+      textClass: "text-white",
+      color: "#FFFFFF",
     },
     secondary: {
-      bg: theme.colors.card,
-      text: theme.colors.text,
+      className: "bg-card border-transparent",
+      textClass: "text-text",
+      color: "#111827",
     },
     outline: {
-      bg: "transparent",
-      text: theme.colors.primary,
-      border: theme.colors.primary,
+      className: "bg-transparent border-primary border-[1.5px]",
+      textClass: "text-primary",
+      color: "#2563eb",
     },
     danger: {
-      bg: "#FEE2E2",
-      text: "#EF4444",
+      className: "bg-red-100 border-transparent",
+      textClass: "text-red-500",
+      color: "#EF4444",
     },
   };
 
@@ -45,40 +36,24 @@ export default function Button({
 
   return (
     <TouchableOpacity
-      style={[
-        styles.button,
-        {
-          backgroundColor: disabled ? "#E5E7EB" : v.bg,
-          borderWidth: v.border ? 1.5 : 0,
-          borderColor: v.border || "transparent",
-        },
-        style,
-      ]}
+      className={`rounded-xl p-4 items-center justify-center min-h-[52px] ${disabled ? "bg-gray-200" : ""} ${!disabled ? v.className : ""}`}
+      style={style}
       onPress={onPress}
       disabled={disabled || loading}
       activeOpacity={0.7}
     >
       {loading ? (
-        <ActivityIndicator size="small" color={disabled ? "#9CA3AF" : v.text} />
+        <ActivityIndicator
+          size="small"
+          color={disabled ? "#9CA3AF" : v.color}
+        />
       ) : (
-        <Text style={[styles.text, { color: disabled ? "#9CA3AF" : v.text }]}>
+        <Text
+          className={`text-base font-bold ${disabled ? "text-gray-400" : v.textClass}`}
+        >
           {title}
         </Text>
       )}
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create(() => ({
-  button: {
-    borderRadius: 12,
-    padding: 16,
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: 52,
-  },
-  text: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-}));
