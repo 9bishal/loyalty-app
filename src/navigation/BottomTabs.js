@@ -11,34 +11,10 @@ import RewardsScreen from "../screens/RewardsScreen";
 import WalletScreen from "../screens/WalletScreen";
 
 const Tab = createBottomTabNavigator();
-const HomeStack = createNativeStackNavigator();
-const RewardsStack = createNativeStackNavigator();
+const RootStack = createNativeStackNavigator();
 
-// Home tab has nested screens for RewardDetails and Notifications
-function HomeStackScreen() {
-  return (
-    <HomeStack.Navigator screenOptions={{ headerShown: false }}>
-      <HomeStack.Screen name="HomeMain" component={HomeScreen} />
-      <HomeStack.Screen name="RewardDetails" component={RewardDetailsScreen} />
-      <HomeStack.Screen name="Notifications" component={NotificationsScreen} />
-    </HomeStack.Navigator>
-  );
-}
-
-// Rewards tab has nested screen for RewardDetails
-function RewardsStackScreen() {
-  return (
-    <RewardsStack.Navigator screenOptions={{ headerShown: false }}>
-      <RewardsStack.Screen name="RewardsMain" component={RewardsScreen} />
-      <RewardsStack.Screen
-        name="RewardDetails"
-        component={RewardDetailsScreen}
-      />
-    </RewardsStack.Navigator>
-  );
-}
-
-export default function BottomTabs() {
+// The 5 bottom tabs
+function TabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -68,11 +44,23 @@ export default function BottomTabs() {
         },
       })}
     >
-      <Tab.Screen name="Home" component={HomeStackScreen} />
-      <Tab.Screen name="Rewards" component={RewardsStackScreen} />
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Rewards" component={RewardsScreen} />
       <Tab.Screen name="Wallet" component={WalletScreen} />
       <Tab.Screen name="Referral" component={ReferralScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
+  );
+}
+
+// Root stack wraps tabs + shared screens (Notifications, RewardDetails)
+// This makes Notifications reachable from ANY tab
+export default function BottomTabs() {
+  return (
+    <RootStack.Navigator screenOptions={{ headerShown: false }}>
+      <RootStack.Screen name="Tabs" component={TabNavigator} />
+      <RootStack.Screen name="Notifications" component={NotificationsScreen} />
+      <RootStack.Screen name="RewardDetails" component={RewardDetailsScreen} />
+    </RootStack.Navigator>
   );
 }

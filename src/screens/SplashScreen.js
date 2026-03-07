@@ -18,7 +18,7 @@ export default function SplashScreen() {
           color: "#2563eb",
         }}
       >
-        Loyalty Shop
+        XYZ Rewards
       </Text>
       <ActivityIndicator size="large" color="#2563eb" />
       <Text style={{ marginTop: 10, color: "#6b7280" }}>
