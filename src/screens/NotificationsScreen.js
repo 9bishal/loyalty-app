@@ -1,7 +1,7 @@
-// Notifications Screen – UI only, business logic in notificationService
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import EmptyState from "../components/EmptyState";
 import {
   formatNotificationTime,
@@ -11,21 +11,24 @@ import {
   markAllAsRead,
   markAsRead,
 } from "../services/notificationService";
-import { StyleSheet, useUnistyles } from "react-native-unistyles";
+import { useStore } from "../store/useStore";
 
 export default function NotificationsScreen({ navigation }) {
-  const { theme } = useUnistyles();
+  const insets = useSafeAreaInsets();
+  const unreadCount = useStore((state) => state.state.unreadCount);
+  const setUnreadCount = useStore((state) => state.setUnreadCount);
   const [notifications, setNotifications] = useState(getAllNotifications());
-  const unreadCount = getUnreadCount();
 
   const handleMarkAsRead = (id) => {
     const updated = markAsRead(id);
     setNotifications(updated);
+    setUnreadCount(getUnreadCount());
   };
 
   const handleMarkAllRead = () => {
     const updated = markAllAsRead();
     setNotifications(updated);
+    setUnreadCount(getUnreadCount());
   };
 
   const renderNotification = ({ item }) => {
@@ -33,24 +36,37 @@ export default function NotificationsScreen({ navigation }) {
 
     return (
       <TouchableOpacity
-        style={[styles.notifCard, !item.read && styles.notifCardUnread]}
+        className={`bg-card rounded-2xl p-4 mb-2.5 flex-row shadow-sm shadow-black/5 elevation-1 ${
+          !item.read ? "border-l-4 border-l-primary bg-primary/5" : ""
+        }`}
         onPress={() => handleMarkAsRead(item.id)}
         activeOpacity={0.7}
       >
-        <View style={[styles.notifIconWrap, { backgroundColor: color + "15" }]}>
+        <View
+          className="w-11 h-11 rounded-xl items-center justify-center mr-3"
+          style={{ backgroundColor: color + "15" }}
+        >
           <Ionicons name={item.icon} size={22} color={color} />
         </View>
-        <View style={styles.notifContent}>
-          <View style={styles.notifHeader}>
-            <Text style={styles.notifTitle} numberOfLines={1}>
+        <View className="flex-1">
+          <View className="flex-row items-center justify-between mb-1">
+            <Text
+              className="text-[15px] font-bold text-text flex-1"
+              numberOfLines={1}
+            >
               {item.title}
             </Text>
-            {!item.read && <View style={styles.unreadDot} />}
+            {!item.read && (
+              <View className="w-2 h-2 rounded-full bg-primary ml-2" />
+            )}
           </View>
-          <Text style={styles.notifMessage} numberOfLines={2}>
+          <Text
+            className="text-[13px] text-muted leading-5 mb-1.5"
+            numberOfLines={2}
+          >
             {item.message}
           </Text>
-          <Text style={styles.notifTime}>
+          <Text className="text-[11px] text-gray-400">
             {formatNotificationTime(item.timestamp)}
           </Text>
         </View>
@@ -59,37 +75,33 @@ export default function NotificationsScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
+    <View className="flex-1 bg-background">
+      <View
+        className="flex-row items-center justify-between px-4 pt-3 pb-3 bg-card border-b border-gray-100"
+        style={{ paddingTop: insets.top + 12 }}
+      >
         <TouchableOpacity
-          style={styles.backBtn}
+          className="w-10 h-10 rounded-xl bg-gray-50 items-center justify-center"
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={22} color={theme.colors.text} />
+          <Ionicons name="arrow-back" size={22} color="#111827" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Notifications</Text>
+        <Text className="text-[18px] font-bold text-text">Notifications</Text>
         {unreadCount > 0 ? (
-          <TouchableOpacity
-            style={styles.markAllBtn}
-            onPress={handleMarkAllRead}
-          >
-            <Text style={styles.markAllText}>Mark all read</Text>
+          <TouchableOpacity className="px-2 py-1.5" onPress={handleMarkAllRead}>
+            <Text className="text-[13px] font-semibold text-primary">
+              Mark all read
+            </Text>
           </TouchableOpacity>
         ) : (
           <View style={{ width: 80 }} />
         )}
       </View>
 
-      {/* Unread Count */}
       {unreadCount > 0 && (
-        <View style={styles.unreadBanner}>
-          <Ionicons
-            name="mail-unread-outline"
-            size={16}
-            color={theme.colors.primary}
-          />
-          <Text style={styles.unreadText}>
+        <View className="flex-row items-center bg-primary/10 px-5 py-2.5 gap-2">
+          <Ionicons name="mail-unread-outline" size={16} color="#2563eb" />
+          <Text className="text-[13px] text-primary font-medium">
             You have {unreadCount} unread notification
             {unreadCount > 1 ? "s" : ""}
           </Text>
@@ -100,7 +112,7 @@ export default function NotificationsScreen({ navigation }) {
         data={notifications}
         renderItem={renderNotification}
         keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <EmptyState
@@ -113,117 +125,3 @@ export default function NotificationsScreen({ navigation }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create((theme) => ({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 12,
-    backgroundColor: theme.colors.card,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F3F4F6",
-  },
-  backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: theme.colors.background,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: theme.colors.text,
-  },
-  markAllBtn: {
-    paddingHorizontal: 8,
-    paddingVertical: 6,
-  },
-  markAllText: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: theme.colors.primary,
-  },
-  unreadBanner: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: theme.colors.primary + "10",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    gap: 8,
-  },
-  unreadText: {
-    fontSize: 13,
-    color: theme.colors.primary,
-    fontWeight: "500",
-  },
-  content: {
-    padding: 16,
-    paddingBottom: 40,
-  },
-  notifCard: {
-    backgroundColor: theme.colors.card,
-    borderRadius: 14,
-    padding: 16,
-    marginBottom: 10,
-    flexDirection: "row",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.03,
-    shadowRadius: 3,
-    elevation: 1,
-  },
-  notifCardUnread: {
-    borderLeftWidth: 3,
-    borderLeftColor: theme.colors.primary,
-    backgroundColor: theme.colors.primary + "05",
-  },
-  notifIconWrap: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 12,
-  },
-  notifContent: {
-    flex: 1,
-  },
-  notifHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 4,
-  },
-  notifTitle: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: theme.colors.text,
-    flex: 1,
-  },
-  unreadDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: theme.colors.primary,
-    marginLeft: 8,
-  },
-  notifMessage: {
-    fontSize: 13,
-    color: theme.colors.muted,
-    lineHeight: 18,
-    marginBottom: 6,
-  },
-  notifTime: {
-    fontSize: 11,
-    color: "#9CA3AF",
-  },
-}));
