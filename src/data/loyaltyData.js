@@ -1,10 +1,11 @@
-// Static loyalty data – simulates backend API responses
-// Ready to be replaced with real API calls
+// Static loyalty data – simulates backend API responses for XYZ e-commerce
+// All data references "XYZ" as the single e-commerce platform
+// Ready to be replaced with real API calls via apiService.js
 
 export const transactions = [
   {
     id: 1,
-    store: "Amazon",
+    store: "XYZ Store",
     description: "Electronics Purchase",
     amount: 4500,
     pointsEarned: 450,
@@ -14,7 +15,7 @@ export const transactions = [
   },
   {
     id: 2,
-    store: "Flipkart",
+    store: "XYZ Fashion",
     description: "Fashion & Apparel",
     amount: 2200,
     pointsEarned: 220,
@@ -24,7 +25,7 @@ export const transactions = [
   },
   {
     id: 3,
-    store: "Myntra",
+    store: "XYZ Store",
     description: "Shoes & Accessories",
     amount: 3800,
     pointsEarned: 380,
@@ -34,7 +35,7 @@ export const transactions = [
   },
   {
     id: 4,
-    store: "BigBasket",
+    store: "XYZ Grocery",
     description: "Grocery Shopping",
     amount: 1500,
     pointsEarned: 150,
@@ -44,7 +45,7 @@ export const transactions = [
   },
   {
     id: 5,
-    store: "Swiggy",
+    store: "XYZ Food",
     description: "Food Delivery",
     amount: 800,
     pointsEarned: 80,
@@ -54,7 +55,7 @@ export const transactions = [
   },
   {
     id: 6,
-    store: "Loyalty Rewards",
+    store: "XYZ Rewards",
     description: "Redeemed ₹50 Off Coupon",
     amount: 0,
     pointsEarned: -500,
@@ -64,8 +65,8 @@ export const transactions = [
   },
   {
     id: 7,
-    store: "Meesho",
-    description: "Home Decor",
+    store: "XYZ Home",
+    description: "Home Decor Purchase",
     amount: 1200,
     pointsEarned: 120,
     date: "2026-02-10",
@@ -74,7 +75,7 @@ export const transactions = [
   },
   {
     id: 8,
-    store: "Referral Bonus",
+    store: "XYZ Referral",
     description: "Friend joined via your code",
     amount: 0,
     pointsEarned: 200,
@@ -110,12 +111,12 @@ export const rewards = [
   {
     id: 1,
     title: "₹50 Off Coupon",
-    description: "Get ₹50 off on your next purchase above ₹500",
+    description: "Get ₹50 off on your next XYZ purchase above ₹500",
     pointsCost: 500,
     icon: "pricetag",
     category: "coupons",
     terms: [
-      "Valid on orders above ₹500",
+      "Valid on XYZ orders above ₹500",
       "Cannot be combined with other offers",
       "Expires 30 days after redemption",
       "One use per customer",
@@ -125,12 +126,12 @@ export const rewards = [
   {
     id: 2,
     title: "Free Delivery",
-    description: "Free delivery on any order, no minimum value required",
+    description: "Free delivery on any XYZ order, no minimum value required",
     pointsCost: 300,
     icon: "bicycle",
     category: "delivery",
     terms: [
-      "Valid on all delivery orders",
+      "Valid on all XYZ delivery orders",
       "No minimum order value",
       "Expires 15 days after redemption",
       "Standard delivery only",
@@ -140,14 +141,14 @@ export const rewards = [
   {
     id: 3,
     title: "₹200 Cashback",
-    description: "Instant ₹200 cashback credited to your wallet",
+    description: "Instant ₹200 cashback credited to your XYZ wallet",
     pointsCost: 2000,
     icon: "wallet",
     category: "cashback",
     terms: [
       "Cashback credited within 24 hours",
       "No minimum order value",
-      "Valid for wallet balance only",
+      "Valid for XYZ wallet balance only",
       "Non-transferable",
     ],
     popularity: 78,
@@ -155,13 +156,13 @@ export const rewards = [
   {
     id: 4,
     title: "10% Discount",
-    description: "10% off on your next order (max ₹500 discount)",
+    description: "10% off on your next XYZ order (max ₹500 discount)",
     pointsCost: 1000,
     icon: "gift",
     category: "coupons",
     terms: [
       "Maximum discount of ₹500",
-      "Valid on all categories",
+      "Valid on all XYZ categories",
       "Expires 30 days after redemption",
       "One use per customer",
     ],
@@ -170,12 +171,12 @@ export const rewards = [
   {
     id: 5,
     title: "₹100 Cashback",
-    description: "₹100 cashback on orders above ₹300",
+    description: "₹100 cashback on XYZ orders above ₹300",
     pointsCost: 800,
     icon: "cash",
     category: "cashback",
     terms: [
-      "Valid on orders above ₹300",
+      "Valid on XYZ orders above ₹300",
       "Cashback credited within 48 hours",
       "Expires 20 days after redemption",
     ],
@@ -184,7 +185,7 @@ export const rewards = [
   {
     id: 6,
     title: "Priority Delivery",
-    description: "Get your order delivered within 2 hours",
+    description: "Get your XYZ order delivered within 2 hours",
     pointsCost: 600,
     icon: "flash",
     category: "delivery",
@@ -198,7 +199,7 @@ export const rewards = [
   {
     id: 7,
     title: "Exclusive Bundle Deal",
-    description: "Access to exclusive bundle pricing on premium products",
+    description: "Access to exclusive XYZ bundle pricing on premium products",
     pointsCost: 3000,
     icon: "diamond",
     category: "exclusive",
@@ -213,12 +214,12 @@ export const rewards = [
   {
     id: 8,
     title: "₹500 Shopping Voucher",
-    description: "₹500 voucher usable across all partner stores",
+    description: "₹500 voucher usable across all XYZ product categories",
     pointsCost: 4500,
     icon: "card",
     category: "exclusive",
     terms: [
-      "Valid across all partner stores",
+      "Valid across all XYZ categories",
       "Non-refundable",
       "Expires 60 days after redemption",
       "Platinum tier exclusive",
@@ -232,7 +233,7 @@ export const notifications = [
   {
     id: 1,
     title: "Points Earned! 🎉",
-    message: "You earned 450 points from your Amazon purchase",
+    message: "You earned 450 points from your XYZ Store purchase",
     type: "earn",
     icon: "star",
     timestamp: "2026-02-28T14:30:00",
@@ -250,7 +251,7 @@ export const notifications = [
   {
     id: 3,
     title: "Tier Upgrade! 🏆",
-    message: "Congratulations! You've reached Silver tier",
+    message: "Congratulations! You've reached Silver tier on XYZ",
     type: "promo",
     icon: "trophy",
     timestamp: "2026-02-25T09:00:00",
@@ -259,7 +260,7 @@ export const notifications = [
   {
     id: 4,
     title: "Weekend Bonus! 🔥",
-    message: "Earn 2x points on all purchases this weekend",
+    message: "Earn 2x points on all XYZ purchases this weekend",
     type: "promo",
     icon: "flame",
     timestamp: "2026-02-22T08:00:00",
@@ -268,7 +269,7 @@ export const notifications = [
   {
     id: 5,
     title: "Referral Success! 🤝",
-    message: "Your friend Rahul joined! You earned 200 bonus points",
+    message: "Your friend Rahul joined XYZ! You earned 200 bonus points",
     type: "referral",
     icon: "people",
     timestamp: "2026-02-20T16:45:00",
@@ -277,7 +278,7 @@ export const notifications = [
   {
     id: 6,
     title: "New Rewards Available! 🎁",
-    message: "Check out 3 new exclusive rewards added to the catalog",
+    message: "Check out 3 new exclusive XYZ rewards added to the catalog",
     type: "promo",
     icon: "gift",
     timestamp: "2026-02-18T11:30:00",
@@ -296,7 +297,7 @@ export const notifications = [
 
 // Referral data
 export const referralData = {
-  referralCode: "LOYAL2026",
+  referralCode: "XYZ2026",
   totalReferrals: 5,
   pendingReferrals: 2,
   pointsPerReferral: 200,

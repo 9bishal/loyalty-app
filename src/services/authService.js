@@ -23,9 +23,9 @@ export const validateLogin = (identifier, password) => {
       user: {
         id: "usr_001",
         username: "testuser",
-        name: "Bishal Shah",
-        email: "bishal@example.com",
-        phone: "+91 98765 43210",
+        name: "Test User",
+        email: "testuser@example.com",
+        phone: "+977 98765 43210",
         joinDate: "2026-01-15",
         avatar: null,
       },

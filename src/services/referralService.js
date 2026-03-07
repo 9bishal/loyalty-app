@@ -46,7 +46,7 @@ export const getReferralHistory = () => {
  * @returns {string}
  */
 export const getShareMessage = (code) => {
-  return `Hey! Join the Loyalty Rewards app using my referral code: ${code} and earn 200 bonus points! 🎁`;
+  return `Hey! Join XYZ Rewards app using my referral code: ${code} and earn 200 bonus points! 🎁`;
 };
 
 /**
